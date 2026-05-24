@@ -1,0 +1,4 @@
+timestamp,umur,jenis_kelamin,tekanan_darah,keluhan,temuan,prediksi_diagnosis,prediksi_perawatan,confidence
+2026-04-30 10:19:07,25.0,L,120/80,Gigi berlubang,Karies pada gigi 16,Karies Sementum/Anterior,Tumpatan Estetik,21.00
+2026-04-30 10:19:07,45.0,P,130/85,Gigi goyang,Periodontal pockets,Periodontitis Kronis,"Scaling, Root Planing, Splinting",16.00
+2026-04-30 10:19:07,30.0,L,125/80,Gusi berdarah,Gingivitis,Gingival Enlargement Obat,Vaksinasi Pencegahan,9.00

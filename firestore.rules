@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user has a specific role
+    function hasRole(role) {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    
+    function isStaff() {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor');
+    }
+    
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    // Queues are readable by public
+    // Anti-Spam: Public can only create if the payload has required fields and is not overly large
+    match /queues/{queueId} {
+      allow read: if true;
+      allow create: if true 
+        && request.resource.data.keys().hasAll(['name', 'phone', 'complaint', 'status'])
+        && request.resource.data.status == 'WAITING'
+        && request.resource.data.size() < 30; // Mencegah serangan payload raksasa
+      allow update, delete: if isStaff();
+    }
+    
+    // Config needs to be readable and incrementable by the public to get current queue numbers
+    match /config/{configId} {
+      allow read: if true;
+      allow create, update: if (
+        request.resource.data.currentNumber == (resource == null ? 1 : resource.data.currentNumber + 1) &&
+        request.resource.data.updatedAt != null
+      ) || isStaff();
+    }
+
+    // Schedules are readable by the public
+    match /schedules/{scheduleId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Inventory and Finance require Staff role
+    match /inventory/{id} {
+      allow read, write: if isStaff();
+    }
+    
+    // Users collection: only Admin can read/write everything
+    // Users can read/write their own basic data
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isStaff());
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Photos for gallery are readable by everyone, but only staff can manage them
+    match /photos/{photoId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Default: block all
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

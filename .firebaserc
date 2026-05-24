@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "klinik-gigi-sehat"
+  },
+  "targets": {
+    "klinik-gigi-sehat": {
+      "hosting": {
+        "second-site": [
+          "praktek-gigi-dan-mulut"
+        ],
+        "default": [
+          "klinik-gigi-sehat"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

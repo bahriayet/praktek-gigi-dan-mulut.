@@ -1,0 +1,43 @@
+===========================================================
+PANDUAN PEMELIHARAAN & PELATIHAN ULANG AI (RANIDA AI)
+===========================================================
+
+Lakukan langkah-langkah ini HANYA di PythonAnywhere jika 
+status AI berubah menjadi "Maintenance" atau jika Anda 
+ingin menambah pengetahuan baru ke AI.
+
+-----------------------------------------------------------
+LANGKAH 1: EDIT DATA (Jika ingin menambah ilmu baru)
+-----------------------------------------------------------
+1. Buka tab "Files" di PythonAnywhere.
+2. Edit file 'generate_dental_dataset.py'.
+3. Tambahkan keluhan atau diagnosa baru di daftar yang ada.
+4. Klik "Save".
+
+-----------------------------------------------------------
+LANGKAH 2: JALANKAN PROSES BELAJAR (Training)
+-----------------------------------------------------------
+1. Buka "Bash Console" dari folder tempat file Anda berada 
+   (Gunakan tombol "Open Bash console here" di tab Files).
+2. Ketik perintah ini lalu Enter:
+   python generate_dental_dataset.py
+3. Setelah selesai, ketik perintah ini lalu Enter:
+   python train_pro_model.py
+4. Pastikan muncul tulisan "Model AI Ganda... berhasil disimpan!".
+
+-----------------------------------------------------------
+LANGKAH 3: AKTIFKAN PERUBAHAN
+-----------------------------------------------------------
+1. Buka tab "Web" di dashboard PythonAnywhere.
+2. Klik tombol HIJAU besar bertuliskan "Reload".
+3. Cek website Anda. Status harus "Operational" (Hijau).
+
+-----------------------------------------------------------
+TIPS JIKA ERROR:
+-----------------------------------------------------------
+Jika muncul error "ModuleNotFoundError", jalankan ini di Bash:
+pip install --user flask flask-cors scikit-learn pandas joblib
+
+-----------------------------------------------------------
+Praktek Gigi Ranida - AI Engine System 2026
+===========================================================

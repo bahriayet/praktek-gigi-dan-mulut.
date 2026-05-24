@@ -1,0 +1,17 @@
+node_modules/
+.next/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Python & AI
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+python_ai_backend/models/*.pkl
+python_ai_backend/data/*.csv
+!python_ai_backend/data/riwayat_pasien_nyata.csv

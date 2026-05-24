@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-05-19 05:02:08",
+  "dataset_size": 100,
+  "n_diagnosis_classes": 13,
+  "n_treatment_classes": 13,
+  "train_size": 80,
+  "test_size": 20,
+  "random_state": 42,
+  "stratified_split": true,
+  "baseline_accuracy_diagnosis": 100.0,
+  "baseline_accuracy_treatment": 100.0,
+  "tuned_accuracy_diagnosis": 100.0,
+  "tuned_accuracy_treatment": 100.0,
+  "improvement_diagnosis": 0.0,
+  "improvement_treatment": 0.0,
+  "cv_mean_diagnosis": 96.0,
+  "cv_std_diagnosis": 4.9,
+  "cv_mean_treatment": 96.0,
+  "cv_std_treatment": 4.9,
+  "macro_roc_auc": 1.0,
+  "best_hyperparameters": {
+    "criterion": "gini",
+    "max_depth": null,
+    "min_samples_split": 2,
+    "n_estimators": 300
+  },
+  "algorithm": "RandomForestClassifier",
+  "preprocessing": [
+    "StandardScaler",
+    "OneHotEncoder",
+    "TfidfVectorizer"
+  ]
+}
