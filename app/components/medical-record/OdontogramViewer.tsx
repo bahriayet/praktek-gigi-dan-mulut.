@@ -245,7 +245,7 @@ export default function OdontogramViewer({ patientId, data, onUpdateTooth, readO
           className={cn(
             "relative transition-all duration-200 cursor-pointer flex items-center justify-center",
             isMolar(toothNum) ? "w-8 h-10 md:w-10 md:h-12" : isCanine(toothNum) ? "w-6 h-9 md:w-8 md:h-11" : "w-5 h-8 md:w-7 md:h-10",
-            isSelected && "scale-110 drop-shadow-lg",
+            isSelected && "scale-110 drop-shadow-[0_0_12px_rgba(8,145,178,0.6)] dark:drop-shadow-[0_0_12px_rgba(20,184,166,0.6)]",
             !readOnly && "hover:scale-105 hover:drop-shadow-md"
           )}
         >
@@ -286,13 +286,26 @@ export default function OdontogramViewer({ patientId, data, onUpdateTooth, readO
 
           {/* Special overlay for MIS/EXT */}
           {isSpecial && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <span className={cn(
-                "font-black leading-none drop-shadow-lg",
-                isMolar(toothNum) ? "text-2xl" : "text-xl",
-                condition === 'EXT' ? "text-red-600" : "text-slate-400"
-              )}>✕</span>
-            </div>
+            <motion.div 
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute inset-0 flex items-center justify-center pointer-events-none p-1.5"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                className={cn(
+                  "w-full h-full drop-shadow-md",
+                  condition === 'EXT' ? "text-rose-500 animate-pulse" : "text-slate-400"
+                )}
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="4" 
+                strokeLinecap="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </motion.div>
           )}
         </div>
 
@@ -319,7 +332,12 @@ export default function OdontogramViewer({ patientId, data, onUpdateTooth, readO
             Odontogram
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-100 dark:border-slate-700 transition-colors">FDI</span>
           </h4>
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 transition-colors">Klik gigi untuk menandai kondisi klinis</p>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1.5 transition-colors">
+            Klik gigi untuk menandai kondisi klinis
+            <span className="md:hidden inline-flex items-center gap-1 text-[9px] font-black text-[#0e7490] dark:text-teal-400 bg-[#0e7490]/10 dark:bg-teal-500/10 px-1.5 py-0.5 rounded-md animate-pulse">
+              ← Geser Horizontal →
+            </span>
+          </p>
         </div>
 
         {/* Legend */}

@@ -45,8 +45,16 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
-    // Inventory and Finance require Staff role
+    // Inventory, Finance, Patients, and Visits require Staff role
     match /inventory/{id} {
+      allow read, write: if isStaff();
+    }
+    
+    match /patients/{patientId} {
+      allow read, write: if isStaff();
+    }
+    
+    match /visits/{visitId} {
       allow read, write: if isStaff();
     }
     

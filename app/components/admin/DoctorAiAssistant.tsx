@@ -51,8 +51,23 @@ export default function DoctorAiAssistant({
     setErrorMsg(null);
 
     const odontogramContext = patientData.odontogram
-      ?.filter(t => t.condition !== 'SOU')
-      .map(t => `Gigi ${t.toothNumber}: ${t.condition}${t.notes ? ` (${t.notes})` : ''}`)
+      ?.filter(t => {
+        const hasUnhealthySurface = t.surfaces && Object.values(t.surfaces).some(s => s && s !== 'SOU');
+        return t.condition !== 'SOU' || hasUnhealthySurface;
+      })
+      .map(t => {
+        let toothDetails = `${t.condition}`;
+        if (t.surfaces) {
+          const surfaceDetails = Object.entries(t.surfaces)
+            .filter(([_, cond]) => cond && cond !== 'SOU')
+            .map(([surf, cond]) => `${surf} (${cond})`)
+            .join(', ');
+          if (surfaceDetails) {
+            toothDetails = `${t.condition} [Permukaan: ${surfaceDetails}]`;
+          }
+        }
+        return `Gigi ${t.toothNumber}: ${toothDetails}${t.notes ? ` (${t.notes})` : ''}`;
+      })
       .join(', ');
 
     try {

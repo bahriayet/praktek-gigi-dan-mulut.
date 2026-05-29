@@ -22,14 +22,10 @@ import FinanceView from '@/app/components/admin/FinanceView';
 import StaffView from '@/app/components/admin/StaffView';
 import EmrPage from '@/app/components/admin/EmrPage';
 import HasilEmrView from '@/app/components/admin/HasilEmrView';
-
-const GalleryManagement = dynamic(() => import('@/app/components/admin/GalleryManagement'), { ssr: false });
-
-
 import ThemeToggle from '@/app/components/ThemeToggle';
-
 import dynamic from 'next/dynamic';
 
+const GalleryManagement = dynamic(() => import('@/app/components/admin/GalleryManagement'), { ssr: false });
 const DoctorAiAssistant = dynamic(() => import('@/app/components/admin/DoctorAiAssistant'), { ssr: false });
 const ClinicGallery = dynamic(() => import('@/app/components/ClinicGallery'), { ssr: false });
 
