@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { SoapVisit, Vitals, IntraOralExam } from '@/app/types';
-import { Search, Activity, Eye, FileText, ClipboardList, Bot } from 'lucide-react';
+import { Search, Activity, Eye, FileText, ClipboardList, Bot, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const POPULAR_ICD10 = [
@@ -77,6 +77,8 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
   const [icdSearch, setIcdSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [isAiThinking, setIsAiThinking] = useState(false);
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
   const [aiResult, setAiResult] = useState<{
     diagnosa: string;
     confidence: string;
@@ -189,6 +191,7 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
   const handleSendAiFeedback = async () => {
     if (!aiResult) return;
     
+    setIsSendingFeedback(true);
     try {
       const FLASK_API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || 'http://127.0.0.1:5000/diagnosa';
       const FLASK_FEEDBACK_URL = FLASK_API_URL.replace('/diagnosa', '/feedback');
@@ -204,10 +207,14 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
       });
       
       if (response.ok) {
+        setFeedbackSent(true);
         if (showToast) showToast("✅ Terima kasih! Koreksi Anda telah disimpan untuk meningkatkan kecerdasan AI Ranida.", "success");
+        setTimeout(() => setFeedbackSent(false), 3000);
       }
     } catch (e) {
       console.error("Gagal mengirim feedback:", e);
+    } finally {
+      setIsSendingFeedback(false);
     }
   };
 
@@ -495,9 +502,22 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
                     <button 
                       type="button"
                       onClick={handleSendAiFeedback}
-                      className="text-[10px] font-black bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 px-4 py-2 rounded-xl hover:bg-purple-50 transition-all flex items-center gap-2"
+                      disabled={isSendingFeedback || feedbackSent}
+                      className={cn(
+                        "text-[10px] font-black border px-4 py-2 rounded-xl transition-all flex items-center gap-2",
+                        feedbackSent 
+                          ? "bg-emerald-50 border-emerald-200 text-emerald-600 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400"
+                          : "bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20",
+                        (isSendingFeedback || feedbackSent) && "opacity-80 cursor-not-allowed"
+                      )}
                     >
-                      Koreksi AI & Simpan Data
+                      {isSendingFeedback ? (
+                        <><Bot className="w-3 h-3 animate-spin" /> Mengirim...</>
+                      ) : feedbackSent ? (
+                        <><CheckCircle2 className="w-3 h-3" /> Berhasil Tersimpan!</>
+                      ) : (
+                        'Koreksi AI & Simpan Data'
+                      )}
                     </button>
                   </div>
                 </div>
