@@ -190,7 +190,8 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
     if (!aiResult) return;
     
     try {
-      const FLASK_FEEDBACK_URL = 'http://127.0.0.1:5000/feedback';
+      const FLASK_API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || 'http://127.0.0.1:5000/diagnosa';
+      const FLASK_FEEDBACK_URL = FLASK_API_URL.replace('/diagnosa', '/feedback');
       const response = await fetch(FLASK_FEEDBACK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
