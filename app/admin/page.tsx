@@ -64,7 +64,7 @@ export default function AdminPage() {
     handleLogin, handleRegister, handleLogout,
     handleDeletePatient, handleUpdatePatient,
     handleDeleteInventory, handleUpdateInventory,
-    handleUpdateUserRole, handleDeletePatientMaster,
+    handleUpdateUserRole, handleUpdateUserName, handleDeletePatientMaster,
     handleDeleteVisit, handleUpdateVisit,
     sendWhatsAppNotification, uploadToSupabase,
     handleFactoryReset, clinicConfig, updateClinicConfig, handleUpdateHeroImage,
@@ -258,7 +258,7 @@ export default function AdminPage() {
                 {adminSubView === 'emr' && managingEmr && <EmrPage key="e" patient={managingEmr} onBack={handleCloseEmr} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'inventory' && <InventoryView key="i" inventory={inventory} onEdit={setEditingInventory} onDelete={(id) => setDeletingItem({id, type:'inventory'})} onAdd={() => setEditingInventory({} as any)} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'finance' && <FinanceView key="f" finishedQueue={queue} onAdd={() => setAdminSubView('dashboard')} onEdit={setEditingVisit} onDelete={(id) => setDeletingItem({id, type:'visit'})} searchTerm={searchTerm} setSearchTerm={setSearchTerm} showToast={showToast} requestConfirm={requestConfirm} />}
-                {adminSubView === 'staff' && <StaffView key="s" users={users} onUpdateRole={handleUpdateUserRole} showToast={showToast} requestConfirm={requestConfirm} />}
+                {adminSubView === 'staff' && <StaffView key="s" users={users} onUpdateRole={handleUpdateUserRole} onUpdateName={handleUpdateUserName} showToast={showToast} requestConfirm={requestConfirm} />}
               </AnimatePresence>
             </div>
           </div>

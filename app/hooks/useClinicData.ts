@@ -249,6 +249,11 @@ export function useClinicData(initialView: View = 'patient') {
     showToast(`Role diupdate ke ${newRole}`);
   };
 
+  const handleUpdateUserName = async (uid: string, newName: string) => {
+    await updateDocObj('users', uid, { displayName: newName });
+    showToast(`Nama diupdate ke ${newName}`);
+  };
+
   const handleDeletePatientMaster = async (id: string) => {
     await deleteDocObj('patients', id);
     showToast('Data pasien master dihapus');
@@ -350,7 +355,7 @@ export function useClinicData(initialView: View = 'patient') {
     handleLogin, handleRegister, handleLogout,
     handleDeletePatient, handleUpdatePatient,
     handleDeleteInventory, handleUpdateInventory,
-    handleUpdateUserRole, handleDeletePatientMaster,
+    handleUpdateUserRole, handleUpdateUserName, handleDeletePatientMaster,
     handleDeleteVisit, handleUpdateVisit,
     sendWhatsAppNotification, uploadToSupabase,
     handleFactoryReset, clinicConfig, updateClinicConfig,
