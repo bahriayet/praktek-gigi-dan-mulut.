@@ -98,13 +98,13 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-brand-600 flex items-center justify-center p-1.5 md:p-2 shadow-lg border border-brand-500">
               <div className="relative w-full h-full">
-                <Image src="/images/logo-ranida.png" alt="Logo" fill className="object-contain" />
+                <Image src="/images/logo-ranida.png" alt="Logo Klinik Gigi Ranida" fill className="object-contain" />
               </div>
             </div>
             <div>
-              <h1 className="text-sm md:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">
+              <div className="text-sm md:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">
                 Praktek Gigi <span className="text-brand-600">Ranida</span>
-              </h1>
+              </div>
               <p className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-0.5">
                 Praktek Mandiri Terapis Gigi
               </p>
@@ -241,7 +241,7 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
               className="space-y-8 text-center lg:text-left"
             >
 
-              <motion.h2
+              <motion.h1
                 variants={fadeUp}
                 custom={1}
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[0.9] tracking-tighter"
@@ -250,7 +250,7 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-teal-500">
                   Dimulai Dari Sini.
                 </span>
-              </motion.h2>
+              </motion.h1>
 
               <motion.p
                 variants={fadeUp}
@@ -639,7 +639,7 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
             <div className="flex items-center gap-3">
               <div className="relative w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center p-1.5">
                 <div className="relative w-full h-full">
-                  <Image src="/images/logo-ranida.png" alt="Logo" fill className="object-contain" />
+                  <Image src="/images/logo-ranida.png" alt="Logo Klinik Gigi Ranida" fill className="object-contain" />
                 </div>
               </div>
               <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">
