@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, Plus, Trash2, Camera, Upload, X, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Image as ImageIcon, Plus, Trash2, Camera, Upload, X, Loader2, Home, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface PhotoItem {
@@ -284,7 +284,7 @@ export default function GalleryManagement({ photos, onAdd, onDelete, onUpload, h
                   className="p-3 bg-brand-500 text-white rounded-full hover:scale-110 transition-transform"
                   title="Jadikan Foto Utama Beranda"
                 >
-                  <Sparkles className="w-5 h-5" />
+                  <Home className="w-5 h-5" />
                 </button>
               </div>
               {item.thumbnailUrl && (
