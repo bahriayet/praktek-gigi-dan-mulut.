@@ -95,7 +95,7 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
 
           {/* ── Area yang di-screenshot ── */}
           <div ref={ticketRef} className="p-8 pb-4 bg-white dark:bg-slate-900 transition-colors">
-            <div className="relative border-[6px] border-brand-500 rounded-[32px] p-6 text-center space-y-5 overflow-hidden bg-brand-500 dark:bg-slate-900 transition-colors">
+            <div className="relative border-[6px] border-brand-500 rounded-[32px] p-6 text-center space-y-5 overflow-hidden bg-white dark:bg-slate-900 transition-colors">
               {/* Dekorasi atas */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-2 bg-brand-500 rounded-b-xl" />
 
@@ -192,7 +192,7 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                   <div key={i} className="bg-brand-500 rounded-full" style={{ width: '2px', height: `${12 + h*2}px` }} />
                 ))}
               </div>
-              <p className="text-[8px] font-black text-slate-300 uppercase tracking-[0.4em]">Praktek Gigi Ranida • 2026</p>
+              <p className="text-[8px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em]">Praktek Gigi Ranida • 2026</p>
             </div>
           </div>
 
