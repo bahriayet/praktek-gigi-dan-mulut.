@@ -1,13 +1,58 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, Clock, Ticket, Monitor } from 'lucide-react';
+import { X, Download, Clock, Ticket, Monitor, CalendarDays, Phone, Timer } from 'lucide-react';
 import { domToPng } from 'modern-screenshot';
 import Image from 'next/image';
 import { QueueItem } from '@/app/types';
 import { cn } from '@/lib/utils';
 
+// ─── KONTAK KLINIK (ubah sesuai nomor klinik Anda) ───────────────────────────
+const CLINIC_PHONE = '0822-XXXX-XXXX';
+const MONITOR_URL  = typeof window !== 'undefined'
+  ? `${window.location.origin}/monitor`
+  : 'https://praktek-gigi-dan-mulut.vercel.app/monitor';
+
+// ─── QR Code mini menggunakan API QRServer (tidak perlu library) ──────────────
+function QRCodeImage({ value, size = 80 }: { value: string; size?: number }) {
+  const src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(value)}&size=${size}x${size}&margin=2&color=0ea5e9&bgcolor=ffffff`;
+  return (
+    <img
+      src={src}
+      alt="QR Pantau Live"
+      width={size}
+      height={size}
+      className="rounded-xl"
+      crossOrigin="anonymous"
+    />
+  );
+}
+
+// ─── Format tanggal ke Bahasa Indonesia ──────────────────────────────────────
+function formatDateID(dateStr: string): string {
+  if (!dateStr) return '-';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('id-ID', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+// ─── Estimasi waktu tunggu berdasarkan nomor antrean ──────────────────────────
+function estimateWaitMinutes(queueNumber: string): number {
+  const match = queueNumber?.match(/\d+/);
+  if (!match) return 10;
+  const num = parseInt(match[0], 10);
+  // Asumsi rata-rata 10 menit per pasien
+  return Math.max(5, num * 10);
+}
 
 interface TicketViewProps {
   ticket: QueueItem;
@@ -16,8 +61,15 @@ interface TicketViewProps {
 }
 
 export default function TicketView({ ticket, onClose, onViewMonitor }: TicketViewProps) {
-  const ticketRef = useRef<HTMLDivElement>(null);
+  const ticketRef    = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [monitorUrl, setMonitorUrl] = useState('https://praktek-gigi-dan-mulut.vercel.app/monitor');
+
+  useEffect(() => {
+    setMonitorUrl(`${window.location.origin}/monitor`);
+  }, []);
+
+  const waitMinutes = estimateWaitMinutes(ticket.number);
 
   const handleDownload = async () => {
     if (!ticketRef.current || isDownloading) return;
@@ -63,11 +115,13 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
             <X className="w-5 h-5" />
           </button>
 
+          {/* ── Area yang di-screenshot ── */}
           <div ref={ticketRef} className="p-8 pb-4 bg-white dark:bg-slate-900 transition-colors">
-            <div className="relative border-[6px] border-brand-500 rounded-[32px] p-6 text-center space-y-6 overflow-hidden bg-brand-500 dark:bg-slate-900 transition-colors">
-              {/* Header Decorations */}
+            <div className="relative border-[6px] border-brand-500 rounded-[32px] p-6 text-center space-y-5 overflow-hidden bg-brand-500 dark:bg-slate-900 transition-colors">
+              {/* Dekorasi atas */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-2 bg-brand-500 rounded-b-xl" />
-              
+
+              {/* Header: Logo + Nama Klinik */}
               <div className="pt-2 flex flex-col items-center">
                 <div className="w-20 h-20 bg-brand-500 rounded-[1.5rem] mb-4 flex items-center justify-center relative overflow-hidden">
                   <Image src="/images/logo-ranida.png" alt="Logo" fill className="object-contain p-4" />
@@ -80,9 +134,10 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                 </div>
               </div>
 
-              <div className="relative py-4">
+              {/* Nomor Antrean */}
+              <div className="relative py-3">
                 <div className="absolute inset-0 bg-brand-500/5 rounded-3xl -rotate-1" />
-                <div className="relative z-10 transition-transform group-hover:scale-105 duration-500">
+                <div className="relative z-10">
                   <p className="text-[10px] font-black text-brand-500/60 uppercase tracking-widest mb-1">Nomor Antrean</p>
                   <div className="text-[72px] font-black text-brand-500 leading-none tracking-tighter">
                     {ticket.number}
@@ -90,14 +145,16 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                 </div>
               </div>
 
-              {/* Premium Divider */}
+              {/* Garis pemisah bertitik */}
               <div className="relative px-2">
-                 <div className="border-t-2 border-dashed border-slate-100 dark:border-slate-800 w-full transition-colors" />
+                <div className="border-t-2 border-dashed border-slate-100 dark:border-slate-800 w-full transition-colors" />
               </div>
 
-              <div className="space-y-4 px-2">
+              {/* Detail Pasien */}
+              <div className="space-y-3 px-2 text-left">
+                {/* Baris 1: Nama + Waktu */}
                 <div className="flex justify-between items-end border-b border-slate-50 dark:border-slate-800 pb-2 transition-colors">
-                  <div className="text-left">
+                  <div>
                     <span className="block text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Identitas Pasien</span>
                     <span className="text-sm font-black text-slate-800 dark:text-slate-100 transition-colors">{ticket.name}</span>
                   </div>
@@ -107,26 +164,72 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                   </div>
                 </div>
 
+                {/* ① TANGGAL */}
+                <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
+                  <CalendarDays className="w-3.5 h-3.5 text-brand-500 shrink-0" />
+                  <div>
+                    <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest">Tanggal Kunjungan</span>
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200">{formatDateID(ticket.date)}</span>
+                  </div>
+                </div>
+
+                {/* ③ ESTIMASI WAKTU TUNGGU */}
+                <div className="flex items-center gap-2.5 bg-amber-50 dark:bg-amber-900/10 px-4 py-2.5 rounded-2xl border border-amber-100 dark:border-amber-900/20 transition-colors">
+                  <Timer className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <div>
+                    <span className="block text-[8px] font-black text-amber-400 uppercase tracking-widest">Est. Waktu Tunggu</span>
+                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300">±{waitMinutes} menit</span>
+                  </div>
+                </div>
+
+                {/* Keluhan */}
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 text-left transition-colors">
-                   <div className="flex items-center gap-2 mb-1.5 transition-colors">
-                      <Clock className="w-3 h-3 text-brand-500" />
-                      <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Detail Keluhan:</span>
-                   </div>
+                  <div className="flex items-center gap-2 mb-1.5 transition-colors">
+                    <Clock className="w-3 h-3 text-brand-500" />
+                    <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Detail Keluhan:</span>
+                  </div>
                   <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed italic transition-colors">&quot;{ticket.complaint}&quot;</p>
                 </div>
               </div>
 
-              {/* Footer Patterns */}
-              <div className="pt-2 opacity-30 flex justify-center gap-1.5">
-                 {[1,3,2,4,2,3,1,2,5,3,2,4,1,3].map((h, i) => (
-                  <div key={i} className="bg-brand-500 rounded-full" style={{ width: '2px', height: `${12 + h*2}px` }} />
-                 ))}
+              {/* ④ QR CODE + Kontak Klinik */}
+              <div className="relative px-2">
+                <div className="border-t-2 border-dashed border-slate-100 dark:border-slate-800 w-full transition-colors" />
               </div>
-              
+
+              <div className="flex items-center justify-between gap-4 px-2">
+                {/* QR Code → link pantau live */}
+                <div className="flex flex-col items-center gap-1">
+                  <QRCodeImage value={monitorUrl} size={72} />
+                  <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest text-center leading-tight">Scan untuk<br/>Pantau Live</span>
+                </div>
+
+                {/* ⑥ KONTAK KLINIK */}
+                <div className="flex-1 space-y-2 text-left">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3 h-3 text-brand-500 shrink-0" />
+                    <div>
+                      <span className="block text-[7px] font-black text-slate-400 uppercase tracking-widest">Kontak Klinik</span>
+                      <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">{CLINIC_PHONE}</span>
+                    </div>
+                  </div>
+                  <p className="text-[7.5px] text-slate-400 leading-relaxed font-medium">
+                    Hubungi kami untuk perubahan jadwal atau informasi lebih lanjut.
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="pt-1 opacity-30 flex justify-center gap-1.5">
+                {[1,3,2,4,2,3,1,2,5,3,2,4,1,3].map((h, i) => (
+                  <div key={i} className="bg-brand-500 rounded-full" style={{ width: '2px', height: `${12 + h*2}px` }} />
+                ))}
+              </div>
               <p className="text-[8px] font-black text-slate-300 uppercase tracking-[0.4em]">Praktek Gigi Ranida • 2026</p>
             </div>
           </div>
 
+          {/* ── Tombol aksi (di luar area screenshot) ── */}
           <div className="p-8 pt-2 space-y-3">
             <button
               onClick={handleDownload}
@@ -137,7 +240,7 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
               )}
             >
               {isDownloading ? (
-                 <div className="w-4 h-4 border-2 border-slate-400 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-slate-400 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
                   <Download className="w-4 h-4" />
@@ -145,7 +248,7 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                 </>
               )}
             </button>
-            
+
             <button
               onClick={onViewMonitor}
               className="w-full py-3.5 bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -153,7 +256,7 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
               <Monitor className="w-3.5 h-3.5" />
               Pantau Live
             </button>
-            
+
             <p className="text-[9px] text-slate-400 text-center uppercase tracking-wider">
               Harap tunjukkan tiket ini saat tiba di resepsionis.
             </p>
