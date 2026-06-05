@@ -9,7 +9,7 @@ import { QueueItem } from '@/app/types';
 import { cn } from '@/lib/utils';
 
 // ─── KONTAK KLINIK (ubah sesuai nomor klinik Anda) ───────────────────────────
-const CLINIC_PHONE = '0822-XXXX-XXXX';
+const CLINIC_PHONE = '0822-3530-8936';
 
 
 // ─── Format tanggal ke Bahasa Indonesia ──────────────────────────────────────
