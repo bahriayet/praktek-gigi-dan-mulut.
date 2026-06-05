@@ -117,7 +117,7 @@ export default function LiveMonitor({ queue, onBack, clinicConfig }: LiveMonitor
           <div className="lg:col-span-8 space-y-8">
             <motion.div 
                layout
-               className="bg-slate-900 rounded-[48px] p-8 md:p-16 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20 border-glow"
+               className="bg-white dark:bg-slate-900 rounded-[48px] p-8 md:p-16 relative overflow-hidden shadow-2xl shadow-slate-200/50 dark:shadow-slate-900/20 border border-slate-100 dark:border-transparent border-glow"
             >
                 {/* Decorative Pattern */}
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none" />
@@ -138,13 +138,13 @@ export default function LiveMonitor({ queue, onBack, clinicConfig }: LiveMonitor
                             transition={{ type: "spring", stiffness: 100 }}
                             className="flex flex-col items-center"
                         >
-                             <h2 className="text-[70px] sm:text-[120px] md:text-[180px] font-black leading-none tracking-tighter mb-2 md:mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">
+                             <h2 className="text-[70px] sm:text-[120px] md:text-[180px] font-black leading-none tracking-tighter mb-2 md:mb-4 text-transparent bg-clip-text bg-gradient-to-b from-slate-800 to-slate-500 dark:from-white dark:to-white/60">
                                 {currentCalling ? currentCalling.number : '---'}
                             </h2>
-                            <h3 className="text-xl md:text-4xl font-black tracking-tight text-white/90 max-w-2xl px-4">
+                             <h3 className="text-xl md:text-4xl font-black tracking-tight text-slate-700 dark:text-white/90 max-w-2xl px-4">
                                 {currentCalling ? currentCalling.name : 'Silakan Tunggu Antrean'}
                             </h3>
-                            <div className="mt-8 flex items-center gap-3 text-brand-400 font-black uppercase tracking-widest text-[10px] md:text-sm">
+                             <div className="mt-8 flex items-center gap-3 text-brand-500 dark:text-brand-400 font-black uppercase tracking-widest text-[10px] md:text-sm">
                                 <ShieldCheck className="w-5 h-5" />
                                 {currentCalling ? 'Silakan Menuju Ruang Periksa' : 'Petugas akan segera memanggil'}
                             </div>
