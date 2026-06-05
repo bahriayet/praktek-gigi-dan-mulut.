@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Clock, Ticket, Monitor, CalendarDays, Phone, Timer } from 'lucide-react';
 import { domToPng } from 'modern-screenshot';
@@ -10,24 +10,7 @@ import { cn } from '@/lib/utils';
 
 // ─── KONTAK KLINIK (ubah sesuai nomor klinik Anda) ───────────────────────────
 const CLINIC_PHONE = '0822-XXXX-XXXX';
-const MONITOR_URL  = typeof window !== 'undefined'
-  ? `${window.location.origin}/monitor`
-  : 'https://praktek-gigi-dan-mulut.vercel.app/monitor';
 
-// ─── QR Code mini menggunakan API QRServer (tidak perlu library) ──────────────
-function QRCodeImage({ value, size = 80 }: { value: string; size?: number }) {
-  const src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(value)}&size=${size}x${size}&margin=2&color=0ea5e9&bgcolor=ffffff`;
-  return (
-    <img
-      src={src}
-      alt="QR Pantau Live"
-      width={size}
-      height={size}
-      className="rounded-xl"
-      crossOrigin="anonymous"
-    />
-  );
-}
 
 // ─── Format tanggal ke Bahasa Indonesia ──────────────────────────────────────
 function formatDateID(dateStr: string): string {
@@ -63,11 +46,6 @@ interface TicketViewProps {
 export default function TicketView({ ticket, onClose, onViewMonitor }: TicketViewProps) {
   const ticketRef    = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [monitorUrl, setMonitorUrl] = useState('https://praktek-gigi-dan-mulut.vercel.app/monitor');
-
-  useEffect(() => {
-    setMonitorUrl(`${window.location.origin}/monitor`);
-  }, []);
 
   const waitMinutes = estimateWaitMinutes(ticket.number);
 
@@ -192,30 +170,19 @@ export default function TicketView({ ticket, onClose, onViewMonitor }: TicketVie
                 </div>
               </div>
 
-              {/* ④ QR CODE + Kontak Klinik */}
+              {/* ⑥ KONTAK KLINIK */}
               <div className="relative px-2">
                 <div className="border-t-2 border-dashed border-slate-100 dark:border-slate-800 w-full transition-colors" />
               </div>
 
-              <div className="flex items-center justify-between gap-4 px-2">
-                {/* QR Code → link pantau live */}
-                <div className="flex flex-col items-center gap-1">
-                  <QRCodeImage value={monitorUrl} size={72} />
-                  <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest text-center leading-tight">Scan untuk<br/>Pantau Live</span>
+              <div className="flex items-center gap-3 px-2 bg-slate-50 dark:bg-slate-800/50 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
+                <div className="w-8 h-8 bg-brand-500/10 rounded-xl flex items-center justify-center shrink-0">
+                  <Phone className="w-4 h-4 text-brand-500" />
                 </div>
-
-                {/* ⑥ KONTAK KLINIK */}
-                <div className="flex-1 space-y-2 text-left">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3 h-3 text-brand-500 shrink-0" />
-                    <div>
-                      <span className="block text-[7px] font-black text-slate-400 uppercase tracking-widest">Kontak Klinik</span>
-                      <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">{CLINIC_PHONE}</span>
-                    </div>
-                  </div>
-                  <p className="text-[7.5px] text-slate-400 leading-relaxed font-medium">
-                    Hubungi kami untuk perubahan jadwal atau informasi lebih lanjut.
-                  </p>
+                <div>
+                  <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest">Kontak Klinik</span>
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{CLINIC_PHONE}</span>
+                  <p className="text-[8px] text-slate-400 font-medium mt-0.5">Hubungi untuk perubahan jadwal</p>
                 </div>
               </div>
 
