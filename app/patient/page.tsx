@@ -46,7 +46,7 @@ import FloatingWhatsApp from '@/app/components/FloatingWhatsApp';
 import ConfirmModal from '@/app/components/modals/ConfirmModal';
 
 // Shared Icons/UI
-import { Ticket, Clock, MapPin, Bot, ShieldAlert, CheckCircle2, AlertCircle, Sparkles, Activity, LayoutDashboard, Image as ImageIcon, ChevronLeft } from 'lucide-react';
+import { Home, Clock, MapPin, Bot, ShieldAlert, CheckCircle2, AlertCircle, Sparkles, Activity, LayoutDashboard, Image as ImageIcon, ChevronLeft, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import { cn, getLocalYMD } from '@/lib/utils';
 
@@ -191,7 +191,7 @@ function PatientPageContent() {
              {/* Right Side: Desktop Beranda + Admin Dashboard */}
              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 <button onClick={() => router.push('/')} className="hidden sm:flex px-4 md:px-6 py-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 text-[10px] md:text-xs font-black uppercase tracking-widest items-center justify-center gap-2 text-slate-600 dark:text-slate-400 hover-lift">
-                  <Ticket className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7490]" />
+                  <Home className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7490]" />
                   <span>BERANDA</span>
                 </button>
 
