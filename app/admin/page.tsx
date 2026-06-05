@@ -22,6 +22,7 @@ import FinanceView from '@/app/components/admin/FinanceView';
 import StaffView from '@/app/components/admin/StaffView';
 import EmrPage from '@/app/components/admin/EmrPage';
 import HasilEmrView from '@/app/components/admin/HasilEmrView';
+import AuditLogView from '@/app/components/admin/AuditLogView';
 
 const GalleryManagement = dynamic(() => import('@/app/components/admin/GalleryManagement'), { ssr: false });
 
@@ -259,6 +260,7 @@ export default function AdminPage() {
                 {adminSubView === 'inventory' && <InventoryView key="i" inventory={inventory} onEdit={setEditingInventory} onDelete={(id) => setDeletingItem({id, type:'inventory'})} onAdd={() => setEditingInventory({} as any)} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'finance' && <FinanceView key="f" finishedQueue={queue} onAdd={() => setAdminSubView('dashboard')} onEdit={setEditingVisit} onDelete={(id) => setDeletingItem({id, type:'visit'})} searchTerm={searchTerm} setSearchTerm={setSearchTerm} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'staff' && <StaffView key="s" users={users} onUpdateRole={handleUpdateUserRole} onUpdateName={handleUpdateUserName} showToast={showToast} requestConfirm={requestConfirm} />}
+                {adminSubView === 'audit-log' && <AuditLogView key="a" showToast={showToast} requestConfirm={requestConfirm} />}
               </AnimatePresence>
             </div>
           </div>

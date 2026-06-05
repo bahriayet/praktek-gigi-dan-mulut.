@@ -63,6 +63,7 @@ export default function AdminSidebar({
     { id: 'finance', icon: <Wallet className="w-5 h-5" />, label: 'Laporan Keuangan' },
     { id: 'staff', icon: <ShieldCheck className="w-5 h-5" />, label: 'Manajemen Tim' },
     { id: 'gallery', icon: <ImageIcon className="w-5 h-5" />, label: 'Galeri Klinik' },
+    { id: 'audit-log', icon: <Activity className="w-5 h-5" />, label: 'Log Aktivitas' },
   ];
 
 
@@ -70,7 +71,7 @@ export default function AdminSidebar({
   const menuItems = fullMenuItems.filter(item => {
     if (userRole === 'admin') return true;
     if (userRole === 'doctor') {
-      return !['finance', 'staff'].includes(item.id);
+      return !['finance', 'staff', 'audit-log'].includes(item.id);
     }
     return false;
   });

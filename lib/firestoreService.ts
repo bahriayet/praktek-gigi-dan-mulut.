@@ -17,14 +17,75 @@ import {
   runTransaction
 } from "./firebase";
 
+// ─── Audit Trail: Tulis log ke koleksi auditLogs ──────────────────────────────
+export const writeAuditLog = async ({
+  action,
+  collectionName,
+  docId,
+  summary,
+}: {
+  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  collectionName: string;
+  docId?: string;
+  summary: string;
+}) => {
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return; // Jangan catat jika tidak ada user login
+    const logRef = collection(db, 'auditLogs');
+    await addDoc(logRef, {
+      action,
+      collection: collectionName,
+      docId: docId || null,
+      userId: currentUser.uid,
+      userName: currentUser.displayName || currentUser.email || 'Unknown',
+      userEmail: currentUser.email || '-',
+      summary,
+      timestamp: serverTimestamp(),
+    });
+  } catch (e) {
+    // Jangan sampai error audit mengganggu operasi utama
+    console.warn('[AuditLog] Gagal menulis log:', e);
+  }
+};
+
+// ─── Backup: Export semua data ke file JSON ───────────────────────────────────
+export const exportAllData = async (): Promise<void> => {
+  const collectionsToExport = ['patients', 'queues', 'visits', 'inventory', 'auditLogs'];
+  const backup: Record<string, any[]> = {};
+
+  for (const col of collectionsToExport) {
+    const snap = await getDocs(collection(db, col));
+    backup[col] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID').replace(/\//g, '-');
+  const timeStr = `${now.getHours()}${now.getMinutes()}`;
+  const filename = `backup-praktek-gigi-ranida-${dateStr}-${timeStr}.json`;
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+
 // CRUD operations for Collections
 export const addDocObj = async (collectionName: string, data: any) => {
   console.log(`[Firestore] Adding to ${collectionName}:`, data);
   const colRef = collection(db, collectionName);
-  return await addDoc(colRef, {
+  const result = await addDoc(colRef, {
     ...data,
     updatedAt: serverTimestamp()
   });
+  writeAuditLog({ action: 'CREATE', collectionName, docId: result.id, summary: `Tambah data baru di ${collectionName}` });
+  return result;
 };
 
 export const incrementClinicCounter = async () => {
@@ -55,13 +116,16 @@ export const incrementClinicCounter = async () => {
 export const updateDocObj = async (collectionName: string, id: string, updates: any) => {
   console.log(`[Firestore] Updating ${collectionName}/${id}:`, updates);
   const docRef = doc(db, collectionName, id);
-  return await updateDoc(docRef, {
+  const result = await updateDoc(docRef, {
     ...updates,
     updatedAt: serverTimestamp()
   });
+  writeAuditLog({ action: 'UPDATE', collectionName, docId: id, summary: `Update data di ${collectionName}` });
+  return result;
 };
 
 export const deleteDocObj = async (collectionName: string, id: string) => {
+  writeAuditLog({ action: 'DELETE', collectionName, docId: id, summary: `Hapus data dari ${collectionName}` });
   const docRef = doc(db, collectionName, id);
   return await deleteDoc(docRef);
 };

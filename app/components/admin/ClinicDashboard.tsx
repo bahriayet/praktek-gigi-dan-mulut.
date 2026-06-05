@@ -25,11 +25,12 @@ import {
   SkipForward,
   RefreshCw,
   AlertTriangle,
-  UserX
+  UserX,
+  Database
 } from 'lucide-react';
 
 import { QueueItem, InventoryItem, AdminSubView } from '@/app/types';
-import { updateDocObj } from '@/lib/firestoreService';
+import { updateDocObj, exportAllData } from '@/lib/firestoreService';
 import { cn, getLocalYMD } from '@/lib/utils';
 import { getRecallMessage, formatMedicalRecordMessage, getWhatsAppLink } from '@/lib/whatsappHelper';
 
@@ -207,6 +208,29 @@ export default function ClinicDashboard({
       exit="exit"
       className="space-y-4 md:space-y-5"
     >
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 transition-all duration-300">
+        <div>
+          <h2 className="text-lg md:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Ringkasan Klinik</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pantau dan kelola aktivitas operasional klinik hari ini.</p>
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              if (showToast) showToast('Sedang menyiapkan backup data...', 'success');
+              await exportAllData();
+              if (showToast) showToast('Backup data berhasil didownload.', 'success');
+            } catch (e) {
+              console.error(e);
+              if (showToast) showToast('Gagal mendownload backup data.', 'error');
+            }
+          }}
+          className="w-full sm:w-auto bg-[#0E7490] hover:bg-[#0E7490]/90 text-white px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2.5 shadow-lg shadow-[#0E7490]/20 active:scale-95 transition-all"
+        >
+          <Database className="w-4 h-4" />
+          <span>Download Backup</span>
+        </button>
+      </div>
+
       <motion.div 
         variants={containerVariants}
         initial="hidden"
