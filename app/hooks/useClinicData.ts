@@ -39,7 +39,8 @@ import {
   QueueItem, 
   InventoryItem,
   Patient,
-  SoapVisit
+  SoapVisit,
+  Article
 } from '@/app/types';
 import { clearClinicalData } from '@/app/utils/DataManagement';
 
@@ -130,6 +131,18 @@ export function useClinicData(initialView: View = 'patient') {
     ? photosSnapshot.docs
         .map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as any))
         .sort((a: any, b: any) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0))
+    : [];
+
+  const needsArticles = activeView === 'landing' || activeView === 'clinic';
+  const [articlesSnapshot] = useCollection(needsArticles ? collection(db, 'articles') : null);
+  const articles = articlesSnapshot
+    ? articlesSnapshot.docs
+        .map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Article))
+        .sort((a: Article, b: Article) => {
+          const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+          const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+          return timeB - timeA;
+        })
     : [];
 
 
@@ -344,6 +357,21 @@ export function useClinicData(initialView: View = 'patient') {
     }
   };
 
+  const handleDeleteArticle = async (id: string) => {
+    await deleteDocObj('articles', id);
+    showToast('Artikel dihapus');
+  };
+
+  const handleUpdateArticle = async (id: string | undefined, updates: any) => {
+    if (!id) {
+      await addDocObj('articles', updates);
+      showToast('Artikel baru ditambahkan');
+    } else {
+      await updateDocObj('articles', id, updates);
+      showToast('Artikel diupdate');
+    }
+  };
+
 
   return {
     activeView, setActiveView,
@@ -369,7 +397,11 @@ export function useClinicData(initialView: View = 'patient') {
     handleDeletePhoto: async (id: string) => {
       await deleteDocObj('photos', id);
       showToast('Foto dihapus');
-    }
+    },
+
+    articles,
+    handleDeleteArticle,
+    handleUpdateArticle
   };
 
 

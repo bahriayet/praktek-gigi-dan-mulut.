@@ -66,7 +66,8 @@ export default function RootPage() {
     handleFactoryReset, clinicConfig, updateClinicConfig, handleUpdateHeroImage,
 
 
-    photos, handleAddPhoto, handleDeletePhoto
+    photos, handleAddPhoto, handleDeletePhoto,
+    articles
   } = app;
 
 
@@ -162,6 +163,7 @@ export default function RootPage() {
         queueCount={todayQueue.length}
         clinicConfig={clinicConfig}
         photos={photos || []}
+        articles={articles}
       />
     );
   }

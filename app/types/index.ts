@@ -3,7 +3,7 @@ import { Timestamp } from '@/lib/firebase';
 export type View = 'landing' | 'patient' | 'monitor' | 'clinic';
 export type PatientTab = 'register' | 'check';
 export type ClinicTab = 'receptionist' | 'doctor';
-export type AdminSubView = 'dashboard' | 'patients' | 'records' | 'inventory' | 'finance' | 'staff' | 'ai-assistant' | 'emr' | 'hasil-emr' | 'schedule' | 'gallery' | 'audit-log';
+export type AdminSubView = 'dashboard' | 'patients' | 'records' | 'inventory' | 'finance' | 'staff' | 'ai-assistant' | 'emr' | 'hasil-emr' | 'schedule' | 'gallery' | 'audit-log' | 'articles';
 
 export interface GalleryImage {
   id: string;
@@ -12,6 +12,17 @@ export interface GalleryImage {
   desc: string;
   order?: number;
   createdAt?: Timestamp;
+}
+
+export interface Article {
+  id: string;
+  title: string;
+  summary: string;
+  emoji: string;
+  category: string;
+  published: boolean;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 }
 
 

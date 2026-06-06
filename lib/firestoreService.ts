@@ -53,7 +53,7 @@ export const writeAuditLog = async ({
 
 // ─── Backup: Export semua data ke file JSON ───────────────────────────────────
 export const exportAllData = async (): Promise<void> => {
-  const collectionsToExport = ['patients', 'queues', 'visits', 'inventory', 'auditLogs'];
+  const collectionsToExport = ['patients', 'queues', 'visits', 'inventory', 'auditLogs', 'articles'];
   const backup: Record<string, any[]> = {};
 
   for (const col of collectionsToExport) {

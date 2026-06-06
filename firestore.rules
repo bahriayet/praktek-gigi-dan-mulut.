@@ -73,6 +73,12 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
+    // Articles are readable by everyone, managed by staff
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
     // Default: block all
     match /{document=**} {
       allow read, write: if isAdmin();

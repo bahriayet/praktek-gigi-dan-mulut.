@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ThemeToggle from '@/app/components/ThemeToggle';
-import { View } from '@/app/types';
+import { View, Article } from '@/app/types';
 
 interface LandingPageProps {
   onNavigate: (view: View) => void;
@@ -34,6 +34,7 @@ interface LandingPageProps {
   queueCount?: number;
   clinicConfig?: any;
   photos?: any[];
+  articles?: Article[];
 }
 
 const fadeUp = {
@@ -49,9 +50,10 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount = 0, clinicConfig, photos }: LandingPageProps) {
+export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount = 0, clinicConfig, photos, articles = [] }: LandingPageProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -78,9 +80,11 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
     }, 100);
   };
 
+  const hasArticles = articles.some(a => a.published);
   const navLinks = [
     { label: 'Layanan', id: 'layanan' },
     { label: 'Cara Kerja', id: 'cara-kerja' },
+    ...(hasArticles ? [{ label: 'Artikel', id: 'edukasi' }] : []),
     { label: 'Fasilitas', id: 'fasilitas' },
     { label: 'Tentang', id: 'tentang' },
   ];
@@ -474,6 +478,76 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
         </div>
       </section>
 
+      {/* ─── ARTICLES SECTION ─── */}
+      {articles.filter(a => a.published).length > 0 && (
+        <section id="edukasi" className="py-20 md:py-28 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200/50 dark:border-slate-800/50 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={stagger}
+              className="text-center mb-16"
+            >
+              <motion.p variants={fadeUp} custom={0} className="text-[10px] font-black text-brand-600 dark:text-brand-400 uppercase tracking-[0.3em] mb-4">
+                Edukasi Kesehatan Gigi
+              </motion.p>
+              <motion.h3 variants={fadeUp} custom={1} className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+                Tips & Artikel Bermanfaat
+              </motion.h3>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={stagger}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              {articles
+                .filter(a => a.published)
+                .slice(0, 3)
+                .map((art, i) => (
+                  <motion.div
+                    key={art.id}
+                    variants={fadeUp}
+                    custom={i}
+                    className="group bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-brand-500/30 transition-all flex flex-col justify-between hover-lift duration-300"
+                  >
+                    <div className="space-y-6">
+                      <div className="flex justify-between items-center">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-3xl shadow-sm border border-slate-100 dark:border-slate-800">
+                          {art.emoji || '🦷'}
+                        </div>
+                        <span className="px-3 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] font-black uppercase tracking-wider rounded-lg">
+                          {art.category || 'Kebersihan'}
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">
+                          {art.title}
+                        </h4>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-4 font-medium">
+                          {art.summary}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                      <button
+                        onClick={() => setSelectedArticle(art)}
+                        className="text-[10px] font-black uppercase tracking-widest text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors flex items-center gap-1.5"
+                      >
+                        Baca Selengkapnya <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
       {/* ─── GALLERY PREVIEW ─── */}
       <section id="fasilitas" className="py-20 md:py-28 bg-white dark:bg-slate-950 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
@@ -659,6 +733,61 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
           </div>
         </div>
       </footer>
+
+      {/* ─── ARTICLE READ MODAL ─── */}
+      <AnimatePresence>
+        {selectedArticle && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-slate-900 rounded-[36px] border border-slate-100 dark:border-slate-800 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <span className="px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] font-black uppercase tracking-wider rounded-lg">
+                  {selectedArticle.category || 'Kebersihan'}
+                </span>
+                <button
+                  onClick={() => setSelectedArticle(null)}
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                >
+                  <X className="w-5 h-5 text-slate-400" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-8 space-y-6">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-4xl shadow-sm border border-slate-100 dark:border-slate-800">
+                    {selectedArticle.emoji || '🦷'}
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                    {selectedArticle.title}
+                  </h3>
+                </div>
+
+                <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+                <div className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm whitespace-pre-line font-medium">
+                  {selectedArticle.summary}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-slate-100 dark:border-slate-800 shrink-0 flex justify-end">
+                <button
+                  onClick={() => setSelectedArticle(null)}
+                  className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg transition-all"
+                >
+                  Selesai Membaca
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
