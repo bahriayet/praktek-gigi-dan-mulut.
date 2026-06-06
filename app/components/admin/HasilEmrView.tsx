@@ -4,7 +4,6 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Search, 
-  Printer, 
   FileText, 
   ClipboardCheck, 
   Activity, 
@@ -324,7 +323,7 @@ function EmrRecordCard({
                  <button 
                   onClick={handleShare}
                   disabled={isSharing}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black hover:bg-emerald-700 transition-all uppercase tracking-widest shadow-lg shadow-emerald-600/10 active:scale-95 disabled:opacity-50"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black hover:bg-emerald-700 transition-all uppercase tracking-widest shadow-lg shadow-emerald-600/10 active:scale-95 disabled:opacity-50"
                  >
                     <Share2 className={cn("w-3.5 h-3.5", isSharing && "animate-spin")} />
                     Bagikan
