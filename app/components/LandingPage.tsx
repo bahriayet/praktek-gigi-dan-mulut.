@@ -516,9 +516,6 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
                   >
                     <div className="space-y-6">
                       <div className="flex justify-between items-center">
-                        <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-3xl shadow-sm border border-slate-100 dark:border-slate-800">
-                          {art.emoji || '🦷'}
-                        </div>
                         <span className="px-3 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] font-black uppercase tracking-wider rounded-lg">
                           {art.category || 'Kebersihan'}
                         </span>
@@ -760,9 +757,6 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-4xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    {selectedArticle.emoji || '🦷'}
-                  </div>
                   <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">
                     {selectedArticle.title}
                   </h3>

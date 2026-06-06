@@ -579,7 +579,6 @@ export default function SoapForm({ initialData = {}, medicalAlerts, onSave, read
                              }}
                              className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:border-[#00685d] dark:hover:border-teal-400 hover:text-[#00685d] dark:hover:text-teal-400 transition-all flex items-center gap-1.5 shadow-sm group"
                            >
-                             <span>{proc.icon}</span>
                              {proc.name}
                              <span className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-[#00685d]/50 dark:text-teal-400/50">
                                (+Rp{(proc.price || 0).toLocaleString()})

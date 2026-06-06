@@ -26,7 +26,6 @@ interface ArticleManagementProps {
 }
 
 const CATEGORIES = ['Kebersihan', 'Pencegahan', 'Perawatan', 'Gigi Anak', 'Umum'];
-const EMOJIS = ['🦷', '🪥', '✨', '👄', '🧑‍⚕️', '🏥', '📝', '💡', '🥗', '🩹'];
 
 export default function ArticleManagement({
   articles = [],
@@ -44,7 +43,6 @@ export default function ArticleManagement({
   // Form State
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
-  const [emoji, setEmoji] = useState('🦷');
   const [category, setCategory] = useState('Kebersihan');
   const [published, setPublished] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,7 +51,6 @@ export default function ArticleManagement({
     setEditingArticle(null);
     setTitle('');
     setSummary('');
-    setEmoji('🦷');
     setCategory('Kebersihan');
     setPublished(true);
     setIsFormOpen(true);
@@ -63,7 +60,6 @@ export default function ArticleManagement({
     setEditingArticle(article);
     setTitle(article.title);
     setSummary(article.summary);
-    setEmoji(article.emoji || '🦷');
     setCategory(article.category || 'Kebersihan');
     setPublished(article.published !== undefined ? article.published : true);
     setIsFormOpen(true);
@@ -81,7 +77,6 @@ export default function ArticleManagement({
       const payload = {
         title: title.trim(),
         summary: summary.trim(),
-        emoji,
         category,
         published
       };
@@ -237,48 +232,22 @@ export default function ArticleManagement({
                   />
                 </div>
 
-                {/* Grid for Emoji and Category */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Emoji selector */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                      Emoji Ilustrasi
-                    </label>
-                    <div className="flex gap-2 flex-wrap bg-slate-50 dark:bg-slate-800 p-3 rounded-2xl">
-                      {EMOJIS.map((e) => (
-                        <button
-                          key={e}
-                          type="button"
-                          onClick={() => setEmoji(e)}
-                          className={`w-10 h-10 rounded-xl text-lg flex items-center justify-center transition-all ${
-                            emoji === e
-                              ? 'bg-brand-500 shadow-md shadow-brand-500/20 scale-110'
-                              : 'hover:bg-slate-200 dark:hover:bg-slate-700'
-                          }`}
-                        >
-                          {e}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Category selection */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                      Kategori Artikel
-                    </label>
-                    <select
-                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                    >
-                      {CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                {/* Category selection */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                    Kategori Artikel
+                  </label>
+                  <select
+                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Summary */}
@@ -366,9 +335,6 @@ export default function ArticleManagement({
 
               <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-4xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    {isPreviewOpen.emoji || '🦷'}
-                  </div>
                   <div className="space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-brand-500">
                       Kategori: {isPreviewOpen.category || 'Kebersihan'}
@@ -412,9 +378,6 @@ export default function ArticleManagement({
             <div className="p-6 space-y-4 flex-1">
               {/* Header */}
               <div className="flex justify-between items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                  {article.emoji || '🦷'}
-                </div>
                 <div className="flex items-center gap-1.5">
                   <span className="px-3 py-1 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[9px] font-black uppercase tracking-wider rounded-lg">
                     {article.category || 'Kebersihan'}
