@@ -208,12 +208,12 @@ function EmrRecordCard({
 
           <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 transition-colors">
              <button 
-                onClick={() => handleExport('print')}
+                onClick={() => handleExport('download')}
                 disabled={isExporting}
                 className="w-full py-3.5 bg-slate-900 dark:bg-slate-950 text-white rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#0E7490] dark:hover:bg-teal-600 transition-all shadow-lg active:scale-95 disabled:opacity-50"
              >
-               <Printer className={cn("w-4 h-4", isExporting && "animate-spin")} />
-               {isExporting ? 'Proses...' : 'Cetak Resume Medis'}
+               <Download className={cn("w-4 h-4", isExporting && "animate-spin")} />
+               {isExporting ? 'Proses...' : 'Simpan'}
              </button>
           </div>
         </div>
@@ -322,17 +322,9 @@ function EmrRecordCard({
            <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-6 transition-colors">
               <div className="flex items-center gap-4 w-full sm:w-auto">
                  <button 
-                  onClick={() => handleExport('download')}
-                  disabled={isExporting}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black text-slate-600 dark:text-slate-300 hover:text-[#0E7490] dark:hover:text-teal-400 hover:border-[#0E7490]/20 transition-all uppercase tracking-widest shadow-sm active:scale-95 disabled:opacity-50"
-                 >
-                    <Download className={cn("w-4 h-4", isExporting && "animate-spin")} />
-                    Simpan PDF
-                 </button>
-                 <button 
                   onClick={handleShare}
                   disabled={isSharing}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black hover:bg-emerald-700 transition-all uppercase tracking-widest shadow-lg shadow-emerald-600/10 active:scale-95 disabled:opacity-50"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black hover:bg-emerald-700 transition-all uppercase tracking-widest shadow-lg shadow-emerald-600/10 active:scale-95 disabled:opacity-50"
                  >
                     <Share2 className={cn("w-3.5 h-3.5", isSharing && "animate-spin")} />
                     Bagikan
