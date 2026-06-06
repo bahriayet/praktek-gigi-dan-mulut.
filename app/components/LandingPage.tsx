@@ -352,19 +352,12 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
                 custom={i}
                 whileHover={{ y: -12, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                onClick={() => onNavigate('patient')}
-                className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:border-brand-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between min-h-[220px]"
+                className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:border-brand-500/30 transition-all duration-300 group relative overflow-hidden"
               >
-                <div>
-                  <div className="absolute top-0 left-0 w-full h-[5px] bg-gradient-to-r from-brand-600 to-teal-500 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-brand-500/15 group-hover:scale-110 transition-all duration-500" />
-                  <h4 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors group-hover:text-brand-600">{s.title}</h4>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{s.desc}</p>
-                </div>
-                <div className="mt-6 flex items-center gap-1.5 text-brand-600 dark:text-brand-400 text-xs font-black uppercase tracking-widest opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  <span>Daftar Sekarang</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
+                <div className="absolute top-0 left-0 w-full h-[5px] bg-gradient-to-r from-brand-600 to-teal-500 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-brand-500/15 group-hover:scale-110 transition-all duration-500" />
+                <h4 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight transition-colors group-hover:text-brand-600">{s.title}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{s.desc}</p>
               </motion.div>
             ))}
           </motion.div>
