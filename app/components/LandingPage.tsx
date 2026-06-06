@@ -12,6 +12,7 @@ import {
   MapPin,
   Phone,
   ChevronRight,
+  ChevronUp,
   Sparkles,
   Shield,
   Heart,
@@ -54,12 +55,23 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+      setShowScrollTop(window.scrollY > 400);
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
@@ -788,6 +800,24 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── BACK TO TOP BUTTON ─── */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-brand-600 hover:bg-brand-700 text-white rounded-full shadow-2xl flex items-center justify-center border border-brand-500/20 backdrop-blur-md cursor-pointer transition-all duration-300"
+            aria-label="Kembali ke atas"
+          >
+            <ChevronUp className="w-6 h-6" />
+          </motion.button>
         )}
       </AnimatePresence>
     </div>
