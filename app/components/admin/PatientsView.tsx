@@ -65,7 +65,19 @@ export default function PatientsView({
                     <User className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 transition-colors">{p.name}</h3>
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 transition-colors">{p.name}</h3>
+                      {p.gender && (
+                        <span className={cn(
+                          "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded shrink-0",
+                          p.gender === 'L' 
+                            ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400" 
+                            : "bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+                        )}>
+                          {p.gender === 'L' ? 'L' : 'P'}
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">{p.phone}</p>
                   </div>
                 </div>
@@ -166,7 +178,19 @@ export default function PatientsView({
                         <User className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-black text-slate-800 dark:text-slate-100 leading-none mb-1 transition-colors">{p.name}</p>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <p className="text-sm font-black text-slate-800 dark:text-slate-100 leading-none transition-colors">{p.name}</p>
+                          {p.gender && (
+                            <span className={cn(
+                              "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded shrink-0",
+                              p.gender === 'L' 
+                                ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400" 
+                                : "bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+                            )}>
+                              {p.gender === 'L' ? 'L' : 'P'}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider transition-colors">{p.phone}</p>
                       </div>
                     </div>

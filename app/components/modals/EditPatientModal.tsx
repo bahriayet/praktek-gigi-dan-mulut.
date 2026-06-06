@@ -30,7 +30,8 @@ export default function EditPatientModal({ patient, onClose, onSave }: EditPatie
     address: patient.address || '',
     birthDate: patient.birthDate || '',
     medicalHistory: patient.medicalHistory || '',
-    allergies: patient.allergies || ''
+    allergies: patient.allergies || '',
+    gender: patient.gender || 'L' as 'L' | 'P'
   });
 
 
@@ -101,16 +102,29 @@ export default function EditPatientModal({ patient, onClose, onSave }: EditPatie
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 transition-colors">Nomor WhatsApp</label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 transition-colors" />
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-bold text-slate-700 dark:text-slate-100"
-              />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 transition-colors">Nomor WhatsApp</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 transition-colors" />
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-bold text-slate-700 dark:text-slate-100 text-sm"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 transition-colors">Jenis Kelamin</label>
+              <select
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'L' | 'P' })}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-bold text-slate-700 dark:text-slate-100 appearance-none text-sm"
+              >
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
+              </select>
             </div>
           </div>
 
@@ -241,7 +255,8 @@ export default function EditPatientModal({ patient, onClose, onSave }: EditPatie
           onClose={() => setIsAiModalOpen(false)}
           patientData={{
             name: formData.name || 'Pasien',
-            medicalHistory: formData.medicalHistory
+            medicalHistory: formData.medicalHistory,
+            gender: formData.gender
           }}
           initialInput={formData.complaint}
           onApply={(content) => {

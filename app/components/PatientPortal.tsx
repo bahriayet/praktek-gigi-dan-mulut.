@@ -50,13 +50,14 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
     address: '',
     medicalHistory: '',
     allergies: '',
-    birthDate: ''
+    birthDate: '',
+    gender: 'L' as 'L' | 'P'
   });
 
   const [loading, setLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Auto-fill name based on phone number
+  // Auto-fill name and gender based on phone number
   useEffect(() => {
     const lookupPatient = async () => {
       if (formData.phone.length < 10) return;
@@ -72,7 +73,11 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
         if (!querySnapshot.empty) {
           const latestDoc = querySnapshot.docs[0].data();
           if (latestDoc.name && !formData.name) {
-            setFormData(prev => ({ ...prev, name: latestDoc.name }));
+            setFormData(prev => ({ 
+              ...prev, 
+              name: latestDoc.name,
+              gender: latestDoc.gender || prev.gender
+            }));
           }
         }
       } catch (error) {
@@ -116,6 +121,7 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
         medicalHistory: formData.medicalHistory,
         allergies: formData.allergies,
         birthDate: formData.birthDate,
+        gender: formData.gender,
         status: 'WAITING' as const,
         createdAt: Timestamp.now()
       };
@@ -133,6 +139,7 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
           address: formData.address || '',
           medicalHistory: formData.medicalHistory || '',
           allergies: formData.allergies || '',
+          gender: formData.gender,
           lastVisit: ticketData.date,
           updatedAt: Timestamp.now() // Use Firestore Timestamp for consistency
         };
@@ -163,7 +170,8 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
         address: '',
         medicalHistory: '',
         allergies: '',
-        birthDate: ''
+        birthDate: '',
+        gender: 'L'
       });
     } catch (error) {
       console.error('Error during registration:', error);
@@ -308,6 +316,25 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
                     placeholder="Masukkan nama Anda..."
                     className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
                   />
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-3">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Jenis Kelamin</label>
+                <div className="relative group">
+                  <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors" />
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'L' | 'P' })}
+                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base appearance-none bg-no-repeat bg-[right_1.25rem_center] cursor-pointer border-glow"
+                    style={{ 
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23${typeof window !== 'undefined' && document.documentElement.classList.contains('dark') ? '94a3b8' : 'cbd5e1'}' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, 
+                      backgroundSize: '1.25rem' 
+                    }}
+                  >
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
+                  </select>
                 </div>
               </motion.div>
 

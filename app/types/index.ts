@@ -77,6 +77,7 @@ export interface QueueItem {
   assessmentIcd10?: string;
   plan?: string;
   soapTeeth?: string;
+  gender?: 'L' | 'P';
 }
 
 
