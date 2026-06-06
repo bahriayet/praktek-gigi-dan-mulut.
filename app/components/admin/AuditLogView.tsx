@@ -1,23 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, 
   Search, 
-  Filter, 
-  Calendar, 
   User, 
   Tag, 
   RefreshCw,
   Database,
-  CheckCircle2,
   Trash2,
-  FileText
+  Archive,
+  AlertTriangle,
+  Clock,
+  CheckCircle2,
+  X
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, limit, getDocs, Timestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
+import { archiveAndDeleteOldLogs } from '@/lib/firestoreService';
 
 interface AuditLog {
   id: string;
@@ -44,6 +46,11 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [limitCount, setLimitCount] = useState<number>(150);
 
+  // Archive modal state
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [archiveDays, setArchiveDays] = useState<number>(90);
+  const [archiving, setArchiving] = useState(false);
+
   const fetchLogs = async () => {
     setLoading(true);
     try {
@@ -66,6 +73,25 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
   useEffect(() => {
     fetchLogs();
   }, [limitCount]);
+
+  const handleArchive = async () => {
+    setArchiving(true);
+    try {
+      const { deletedCount } = await archiveAndDeleteOldLogs(archiveDays);
+      setShowArchiveModal(false);
+      if (deletedCount === 0) {
+        if (showToast) showToast(`Tidak ada log lebih dari ${archiveDays} hari yang ditemukan.`, 'error');
+      } else {
+        if (showToast) showToast(`✅ Berhasil! ${deletedCount} log diarsipkan & dihapus dari Firestore.`, 'success');
+        fetchLogs(); // refresh tampilan
+      }
+    } catch (e) {
+      console.error('Gagal mengarsipkan log:', e);
+      if (showToast) showToast('Gagal mengarsipkan log. Coba lagi.', 'error');
+    } finally {
+      setArchiving(false);
+    }
+  };
 
   const filteredLogs = logs.filter(log => {
     const matchesAction = actionFilter === 'all' || log.action === actionFilter;
@@ -151,14 +177,23 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
           <h2 className="text-lg md:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Log Aktivitas Klinik</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Audit trail perubahan data klinis oleh tim dan staf medis.</p>
         </div>
-        <button
-          onClick={fetchLogs}
-          disabled={loading}
-          className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2.5 active:scale-95 transition-all"
-        >
-          <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
-          <span>Segarkan Log</span>
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+          <button
+            onClick={fetchLogs}
+            disabled={loading}
+            className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2.5 active:scale-95 transition-all"
+          >
+            <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+            <span>Segarkan Log</span>
+          </button>
+          <button
+            onClick={() => setShowArchiveModal(true)}
+            className="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/40 px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2.5 active:scale-95 transition-all"
+          >
+            <Archive className="w-4 h-4" />
+            <span>Arsipkan &amp; Hapus Lama</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -322,6 +357,119 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
           </>
         )}
       </div>
+
+      {/* ── Archive Modal ── */}
+      <AnimatePresence>
+        {showArchiveModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget && !archiving) setShowArchiveModal(false); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-md overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="bg-rose-50 dark:bg-rose-950/30 border-b border-rose-100 dark:border-rose-900/40 p-6 flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center shrink-0">
+                    <Archive className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-800 dark:text-slate-100">Arsipkan &amp; Hapus Log Lama</h3>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">File backup akan otomatis diunduh sebelum dihapus</p>
+                  </div>
+                </div>
+                {!archiving && (
+                  <button onClick={() => setShowArchiveModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mt-0.5">
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-5">
+                {/* Warning box */}
+                <div className="flex gap-3 p-4 bg-amber-50 dark:bg-amber-950/20 rounded-2xl border border-amber-100 dark:border-amber-900/30">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-700 dark:text-amber-400 font-medium leading-relaxed">
+                    Log yang dihapus dari Firestore <span className="font-black">tidak dapat dikembalikan</span>. Pastikan file arsip berhasil terunduh sebelum menutup halaman.
+                  </p>
+                </div>
+
+                {/* Period selector */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    Hapus log lebih dari:
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[30, 60, 90, 180].map(days => (
+                      <button
+                        key={days}
+                        onClick={() => setArchiveDays(days)}
+                        className={cn(
+                          'py-3 rounded-2xl text-xs font-black transition-all border',
+                          archiveDays === days
+                            ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800'
+                        )}
+                      >
+                        {days}h
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 pt-1">
+                    Akan menghapus semua log yang dibuat sebelum <span className="font-bold text-slate-600 dark:text-slate-300">{new Date(Date.now() - archiveDays * 86400000).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </p>
+                </div>
+
+                {/* Info list */}
+                <div className="space-y-2">
+                  {[
+                    'File .json akan otomatis diunduh ke komputer Anda',
+                    'Log di Firestore akan dihapus secara permanen',
+                    'Data pasien & rekam medis tidak terpengaruh',
+                  ].map((info, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                      <p className="text-xs text-slate-600 dark:text-slate-400">{info}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <button
+                  onClick={() => setShowArchiveModal(false)}
+                  disabled={archiving}
+                  className="flex-1 py-3 rounded-2xl text-xs font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleArchive}
+                  disabled={archiving}
+                  className="flex-1 py-3 rounded-2xl text-xs font-black text-white bg-rose-500 hover:bg-rose-600 transition-all flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-rose-500/20 active:scale-95"
+                >
+                  {archiving ? (
+                    <><RefreshCw className="w-4 h-4 animate-spin" /><span>Memproses...</span></>
+                  ) : (
+                    <><Trash2 className="w-4 h-4" /><span>Arsipkan &amp; Hapus</span></>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

@@ -14,7 +14,9 @@ import {
   where,
   getDocs,
   increment,
-  runTransaction
+  runTransaction,
+  writeBatch,
+  Timestamp,
 } from "./firebase";
 
 // ─── Audit Trail: Tulis log ke koleksi auditLogs ──────────────────────────────
@@ -75,6 +77,56 @@ export const exportAllData = async (): Promise<void> => {
   URL.revokeObjectURL(url);
 };
 
+
+// ─── Arsipkan & Hapus Log Lama ────────────────────────────────────────────────
+// Mengambil log yang lebih tua dari `daysOld` hari, mengunduh sebagai backup .json,
+// lalu menghapusnya dari Firestore secara bertahap (batch 500 dokumen).
+export const archiveAndDeleteOldLogs = async (daysOld: number): Promise<{ deletedCount: number }> => {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - daysOld);
+  const cutoffTimestamp = Timestamp.fromDate(cutoff);
+
+  // 1. Ambil semua log yang lebih tua dari cutoff
+  const logsRef = collection(db, 'auditLogs');
+  const q = query(logsRef, where('timestamp', '<', cutoffTimestamp));
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    return { deletedCount: 0 };
+  }
+
+  const logsToArchive = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // 2. Unduh sebagai file JSON (backup arsip)
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID').replace(/\//g, '-');
+  const filename = `arsip-auditlog-sebelum-${daysOld}hari-${dateStr}.json`;
+  const blob = new Blob([JSON.stringify(logsToArchive, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  // 3. Hapus dari Firestore dalam batch (maks 500 per batch)
+  const BATCH_SIZE = 500;
+  let deletedCount = 0;
+
+  for (let i = 0; i < snap.docs.length; i += BATCH_SIZE) {
+    const batch = writeBatch(db);
+    const chunk = snap.docs.slice(i, i + BATCH_SIZE);
+    chunk.forEach(docSnap => {
+      batch.delete(docSnap.ref);
+    });
+    await batch.commit();
+    deletedCount += chunk.length;
+  }
+
+  return { deletedCount };
+};
 
 // CRUD operations for Collections
 export const addDocObj = async (collectionName: string, data: any) => {
