@@ -341,13 +341,12 @@ export default function LandingPage({ onNavigate, onGallery, isStaff, queueCount
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {[
-              { title: 'Konsultasi & Periksa', desc: 'Pemeriksaan rutin dan konsultasi keluhan gigi dan mulut.', icon: '🩺' },
-              { title: 'Pembersihan Karang', desc: 'Scaling untuk mencegah radang gusi dan bau mulut.', icon: '✨' },
-              { title: 'Penambalan Gigi', desc: 'Penambalan estetik dengan bahan komposit berkualitas.', icon: '🦷' },
-              { title: 'Pencabutan Gigi', desc: 'Pencabutan gigi susu, dewasa, atau impaksi gigi bungsu.', icon: '💉' },
+              { title: 'Konsultasi & Periksa', desc: 'Pemeriksaan rutin dan konsultasi keluhan gigi dan mulut.' },
+              { title: 'Pembersihan Karang', desc: 'Scaling untuk mencegah radang gusi dan bau mulut.' },
+              { title: 'Penambalan Gigi', desc: 'Penambalan estetik dengan bahan komposit berkualitas.' },
+              { title: 'Pencabutan Gigi', desc: 'Pencabutan gigi susu, dewasa, atau impaksi gigi bungsu.' },
             ].map((s, i) => (
               <motion.div key={i} variants={fadeUp} custom={i} className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-brand-500/30 transition-all group">
-                <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">{s.icon}</div>
                 <h4 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{s.title}</h4>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{s.desc}</p>
               </motion.div>
