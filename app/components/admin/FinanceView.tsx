@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
@@ -29,6 +29,19 @@ interface FinanceViewProps {
 }
 
 export default function FinanceView({ finishedQueue, onAdd, onEdit, onDelete, searchTerm, setSearchTerm, showToast, requestConfirm }: FinanceViewProps) {
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const filteredQueue = finishedQueue.filter(q => 
     q.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     (q.billingAmount || 0).toString().includes(searchTerm) ||
@@ -169,7 +182,7 @@ export default function FinanceView({ finishedQueue, onAdd, onEdit, onDelete, se
           <div className="flex items-center justify-between px-2">
             <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2 transition-colors">
                <Wallet className="w-4 h-4 text-amber-500" /> Konfirmasi Kasir
-            </h3>
+             </h3>
             <div className="px-2 py-1 bg-amber-500 text-white rounded-lg text-[9px] font-black">{pendingPayments.length}</div>
           </div>
 
@@ -238,52 +251,93 @@ export default function FinanceView({ finishedQueue, onAdd, onEdit, onDelete, se
            </div>
 
            <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[40px] border border-white dark:border-slate-800 shadow-premium dark:shadow-none overflow-hidden transition-colors">
-             <div className="overflow-x-auto">
-               <table className="w-full text-left">
-                  <thead className="bg-slate-50/50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 transition-colors">
-                     <tr>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Pasien</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tindakan</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Jumlah</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Aksi</th>
-                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-                     {finalizedPayments.map((q) => (
-                       <tr key={q.id} className="hover:bg-white dark:hover:bg-slate-800 transition-colors group">
-                          <td className="px-6 py-5">
-                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center text-[10px] font-black text-emerald-700 dark:text-emerald-400 transition-colors">
-                                   {q.number}
-                                </div>
-                                <div>
-                                   <p className="text-[13px] font-black text-slate-800 dark:text-slate-100 truncate max-w-[120px] transition-colors">{q.name}</p>
-                                   <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase transition-colors">{q.time}</p>
-                                </div>
-                             </div>
-                          </td>
-                          <td className="px-6 py-5">
-                             <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate max-w-[150px] transition-colors">{q.treatment || '-'}</p>
-                          </td>
-                          <td className="px-6 py-5">
-                             <p className="text-[13px] font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Rp {(q.billingAmount || 0).toLocaleString('id-ID')}</p>
-                          </td>
-                          <td className="px-6 py-5">
-                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => onEdit(q)} className="p-2 text-slate-400 hover:text-[#0E7490] hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Pencil className="w-4 h-4" /></button>
-                                <button onClick={() => onDelete(q.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
-                             </div>
-                          </td>
-                       </tr>
-                     ))}
-                     {finalizedPayments.length === 0 && (
+             {/* Mobile View: Cards for History */}
+             {mounted && isMobile && (
+               <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                 {finalizedPayments.map((q) => (
+                   <div key={q.id} className="p-4 space-y-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all">
+                     <div className="flex justify-between items-start">
+                       <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center text-[10px] font-black text-emerald-700 dark:text-emerald-400 transition-colors">
+                           {q.number}
+                         </div>
+                         <div>
+                           <p className="text-sm font-black text-slate-800 dark:text-slate-100 transition-colors">{q.name}</p>
+                           <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase transition-colors">{q.time}</p>
+                         </div>
+                       </div>
+                       <div className="text-right">
+                         <p className="text-[13px] font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Rp {(q.billingAmount || 0).toLocaleString('id-ID')}</p>
+                       </div>
+                     </div>
+                     <div className="flex justify-between items-center">
+                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium transition-colors">
+                         {q.treatment || 'Konsultasi Gigi'}
+                       </p>
+                       <div className="flex items-center gap-2">
+                         <button onClick={() => onEdit(q)} className="p-2 text-slate-400 hover:text-[#0E7490] hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Pencil className="w-3.5 h-3.5" /></button>
+                         <button onClick={() => onDelete(q.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+                       </div>
+                     </div>
+                   </div>
+                 ))}
+                 {finalizedPayments.length === 0 && (
+                   <div className="p-8 text-center text-slate-400 text-xs font-bold uppercase tracking-widest opacity-40">
+                     Belum ada riwayat transaksi
+                   </div>
+                 )}
+               </div>
+             )}
+
+             {/* Desktop View: Table */}
+             {mounted && !isMobile && (
+               <div className="hidden md:block overflow-x-auto">
+                 <table className="w-full text-left">
+                    <thead className="bg-slate-50/50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 transition-colors">
                        <tr>
-                          <td colSpan={4} className="px-6 py-20 text-center text-xs font-bold text-slate-400 uppercase tracking-[0.2em] opacity-40">Belum ada riwayat transaksi</td>
+                          <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Pasien</th>
+                          <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tindakan</th>
+                          <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Jumlah</th>
+                          <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Aksi</th>
                        </tr>
-                     )}
-                  </tbody>
-               </table>
-             </div>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                       {finalizedPayments.map((q) => (
+                         <tr key={q.id} className="hover:bg-white dark:hover:bg-slate-800 transition-colors group">
+                            <td className="px-6 py-5">
+                               <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center text-[10px] font-black text-emerald-700 dark:text-emerald-400 transition-colors">
+                                     {q.number}
+                                  </div>
+                                  <div>
+                                     <p className="text-[13px] font-black text-slate-800 dark:text-slate-100 truncate max-w-[120px] transition-colors">{q.name}</p>
+                                     <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase transition-colors">{q.time}</p>
+                                  </div>
+                               </div>
+                            </td>
+                            <td className="px-6 py-5">
+                               <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate max-w-[150px] transition-colors">{q.treatment || '-'}</p>
+                            </td>
+                            <td className="px-6 py-5">
+                               <p className="text-[13px] font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Rp {(q.billingAmount || 0).toLocaleString('id-ID')}</p>
+                            </td>
+                            <td className="px-6 py-5">
+                               <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button onClick={() => onEdit(q)} className="p-2 text-slate-400 hover:text-[#0E7490] hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Pencil className="w-4 h-4" /></button>
+                                  <button onClick={() => onDelete(q.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
+                               </div>
+                            </td>
+                         </tr>
+                       ))}
+                       {finalizedPayments.length === 0 && (
+                         <tr>
+                            <td colSpan={4} className="px-6 py-20 text-center text-xs font-bold text-slate-400 uppercase tracking-[0.2em] opacity-40">Belum ada riwayat transaksi</td>
+                         </tr>
+                       )}
+                    </tbody>
+                 </table>
+               </div>
+             )}
            </div>
         </div>
       </div>

@@ -100,13 +100,13 @@ export default function AdminSidebar({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-0 bg-black/40 lg:backdrop-blur-sm z-40 lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <aside className={cn(
-        "fixed inset-y-0 left-0 w-64 glass-premium flex flex-col p-5 gap-6 z-50 transition-transform duration-300 lg:relative lg:translate-x-0 overflow-y-auto custom-scrollbar border-r border-slate-200/50 dark:border-white/5",
+        "fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col p-5 gap-6 z-50 transition-transform duration-300 lg:relative lg:translate-x-0 overflow-y-auto custom-scrollbar",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex items-center justify-between lg:justify-start gap-3">
@@ -129,44 +129,31 @@ export default function AdminSidebar({
           </button>
         </div>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-1"
-        >
+        <div className="space-y-1">
           {menuItems.map((item) => (
-            <motion.button
+            <button
               key={item.id}
-              variants={itemVariants}
               onClick={() => {
                 setActiveSubView(item.id as AdminSubView);
                 if (window.innerWidth < 768) setIsOpen(false);
               }}
               className={cn(
-                "w-full flex items-center gap-3.5 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
+                "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-left text-sm font-semibold",
                 activeSubView === item.id 
-                  ? "bg-brand-500 text-white shadow-lg shadow-brand-500/30 font-bold" 
-                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white font-medium"
+                  ? "bg-brand-600 text-white shadow-md font-bold" 
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 font-medium"
               )}
             >
-              {activeSubView === item.id && (
-                <motion.div 
-                  layoutId="active-pill"
-                  className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
               <div className={cn(
-                "transition-transform duration-300 group-hover:scale-110",
-                activeSubView === item.id ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-brand-500"
+                "w-5 h-5 flex items-center justify-center shrink-0",
+                activeSubView === item.id ? "text-white" : "text-slate-400 dark:text-slate-400"
               )}>
                 {item.icon}
               </div>
-              <span className="text-[13px] tracking-tight">{item.label}</span>
-            </motion.button>
+              <span className="ml-3 tracking-tight">{item.label}</span>
+            </button>
           ))}
-        </motion.div>
+        </div>
 
         <div className="space-y-4">
           <button

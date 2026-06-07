@@ -51,6 +51,19 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
   const [archiveDays, setArchiveDays] = useState<number>(90);
   const [archiving, setArchiving] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchLogs = async () => {
     setLoading(true);
     try {
@@ -265,95 +278,99 @@ export default function AuditLogView({ showToast, requestConfirm }: AuditLogView
         ) : (
           <>
             {/* Mobile View: Cards */}
-            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
-              {filteredLogs.map((log) => (
-                <div key={log.id} className="p-4 space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider", getActionBadgeClass(log.action))}>
-                          {log.action}
-                        </span>
-                        <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider", getCollectionBadgeClass(log.collection))}>
-                          {getFriendlyCollection(log.collection)}
-                        </span>
+            {mounted && isMobile && (
+              <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                {filteredLogs.map((log) => (
+                  <div key={log.id} className="p-4 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider", getActionBadgeClass(log.action))}>
+                            {log.action}
+                          </span>
+                          <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider", getCollectionBadgeClass(log.collection))}>
+                            {getFriendlyCollection(log.collection)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 font-semibold">{formatTime(log.timestamp)}</p>
                       </div>
-                      <p className="text-xs text-slate-400 font-semibold">{formatTime(log.timestamp)}</p>
+                    </div>
+
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-snug">
+                      {log.summary}
+                    </p>
+
+                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/40">
+                      <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <div className="text-[11px] font-medium leading-none">
+                        <span className="text-slate-700 dark:text-slate-200 font-bold block">{log.userName}</span>
+                        <span className="text-slate-400 block mt-0.5">{log.userEmail}</span>
+                      </div>
                     </div>
                   </div>
-
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-snug">
-                    {log.summary}
-                  </p>
-
-                  <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/40">
-                    <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <div className="text-[11px] font-medium leading-none">
-                      <span className="text-slate-700 dark:text-slate-200 font-bold block">{log.userName}</span>
-                      <span className="text-slate-400 block mt-0.5">{log.userEmail}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {filteredLogs.length === 0 && (
-                <div className="p-12 text-center text-slate-400 text-sm italic">Tidak ada log aktivitas yang ditemukan</div>
-              )}
-            </div>
+                ))}
+                {filteredLogs.length === 0 && (
+                  <div className="p-12 text-center text-slate-400 text-sm italic">Tidak ada log aktivitas yang ditemukan</div>
+                )}
+              </div>
+            )}
 
             {/* Desktop View: Table */}
-            <div className="hidden md:block overflow-x-auto no-scrollbar">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 transition-colors">
-                  <tr>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Waktu</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Staf / Pengguna</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Aksi</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Kategori Data</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Ringkasan Aktivitas</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {filteredLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                      <td className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                        {formatTime(log.timestamp)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-850 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0 font-black text-[10px]">
-                            {(log.userName || 'U').charAt(0).toUpperCase()}
-                          </div>
-                          <div className="text-xs">
-                            <span className="text-slate-800 dark:text-slate-200 font-bold block">{log.userName}</span>
-                            <span className="text-slate-400 block mt-0.5 text-[10px]">{log.userEmail}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={cn("px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider", getActionBadgeClass(log.action))}>
-                          {log.action}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={cn("px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", getCollectionBadgeClass(log.collection))}>
-                          {getFriendlyCollection(log.collection)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-xs truncate md:max-w-md">
-                        {log.summary}
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredLogs.length === 0 && (
+            {mounted && !isMobile && (
+              <div className="hidden md:block overflow-x-auto no-scrollbar">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 transition-colors">
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-slate-400 text-sm italic">
-                        Tidak ada log aktivitas yang ditemukan
-                      </td>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest">Waktu</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest">Staf / Pengguna</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest">Aksi</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest">Kategori Data</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest">Ringkasan Aktivitas</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {filteredLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                        <td className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                          {formatTime(log.timestamp)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-850 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0 font-black text-[10px]">
+                              {(log.userName || 'U').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="text-xs">
+                              <span className="text-slate-800 dark:text-slate-200 font-bold block">{log.userName}</span>
+                              <span className="text-slate-400 block mt-0.5 text-[10px]">{log.userEmail}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={cn("px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider", getActionBadgeClass(log.action))}>
+                            {log.action}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={cn("px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", getCollectionBadgeClass(log.collection))}>
+                            {getFriendlyCollection(log.collection)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-xs truncate md:max-w-md">
+                          {log.summary}
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredLogs.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-12 text-center text-slate-400 text-sm italic">
+                          Tidak ada log aktivitas yang ditemukan
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </>
         )}
       </div>
