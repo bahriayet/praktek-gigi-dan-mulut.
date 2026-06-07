@@ -202,7 +202,7 @@ export default function EditPatientModal({ patient, onClose, onSave }: EditPatie
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800 pt-3 transition-colors">
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-3 transition-colors">
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 transition-colors">Riwayat Medis Umum (Penyakit Bawaan)</label>
               <div className="relative">
@@ -213,20 +213,6 @@ export default function EditPatientModal({ patient, onClose, onSave }: EditPatie
                   rows={2}
                   className="w-full pl-10 pr-4 py-3 bg-red-50 dark:bg-rose-950/20 border border-red-100 dark:border-rose-900/30 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all resize-none text-sm text-red-900 dark:text-rose-200 placeholder:text-red-300 dark:placeholder:text-rose-900"
                   placeholder="Contoh: Asma, Hipertensi (Opsional)"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1 transition-colors">Alergi (Obat/Makanan)</label>
-              <div className="relative">
-                <ShieldAlert className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-slate-500 transition-colors" />
-                <textarea
-                  value={formData.allergies}
-                  onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
-                  rows={2}
-                  className="w-full pl-10 pr-4 py-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all resize-none text-sm text-amber-900 dark:text-amber-200 placeholder:text-amber-300 dark:placeholder:text-amber-900"
-                  placeholder="Contoh: Alergi Amoxicillin, Alergi Bius (Opsional)"
                 />
               </div>
             </div>

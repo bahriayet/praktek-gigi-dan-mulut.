@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Pencil, Trash2, Users, ClipboardList, ShieldAlert, HeartPulse, User, MapPin, MessageSquare } from 'lucide-react';
 import { Patient } from '@/app/types';
@@ -28,6 +28,19 @@ export default function PatientsView({
   onOpenEmr,
   onUpdate
 }: PatientsViewProps) {
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const filteredPatients = patients.filter(p => 
     (p.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
@@ -148,127 +161,129 @@ export default function PatientsView({
         </motion.div>
 
         {/* Desktop View: Table */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50/50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 font-bold text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] transition-colors">
-                <th className="px-8 py-5">Identitas Pasien</th>
-                <th className="px-4 py-5">Alamat</th>
-                <th className="px-4 py-5">Riwayat Penyakit</th>
-                <th className="px-4 py-5">Alergi</th>
-                <th className="px-4 py-5">Kunjungan/Jadwal Terakhir</th>
-                <th className="px-8 py-5 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <motion.tbody 
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="divide-y divide-slate-50"
-            >
-              {filteredPatients.map((p) => (
-                <motion.tr 
-                  variants={itemVariants}
-                  key={p.id} 
-                  className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all border-b border-slate-50 dark:border-slate-800 last:border-0"
-                >
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:scale-110 transition-transform">
-                        <User className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <p className="text-sm font-black text-slate-800 dark:text-slate-100 leading-none transition-colors">{p.name}</p>
-                          {p.gender && (
-                            <span className={cn(
-                              "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded shrink-0",
-                              p.gender === 'L' 
-                                ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400" 
-                                : "bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
-                            )}>
-                              {p.gender === 'L' ? 'L' : 'P'}
-                            </span>
-                          )}
+        {mounted && !isMobile && (
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50/50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 font-bold text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] transition-colors">
+                  <th className="px-8 py-5">Identitas Pasien</th>
+                  <th className="px-4 py-5">Alamat</th>
+                  <th className="px-4 py-5">Riwayat Penyakit</th>
+                  <th className="px-4 py-5">Alergi</th>
+                  <th className="px-4 py-5">Kunjungan/Jadwal Terakhir</th>
+                  <th className="px-8 py-5 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <motion.tbody 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="divide-y divide-slate-50"
+              >
+                {filteredPatients.map((p) => (
+                  <motion.tr 
+                    variants={itemVariants}
+                    key={p.id} 
+                    className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all border-b border-slate-50 dark:border-slate-800 last:border-0"
+                  >
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:scale-110 transition-transform">
+                          <User className="w-5 h-5" />
                         </div>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider transition-colors">{p.phone}</p>
+                        <div>
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <p className="text-sm font-black text-slate-800 dark:text-slate-100 leading-none transition-colors">{p.name}</p>
+                            {p.gender && (
+                              <span className={cn(
+                                "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded shrink-0",
+                                p.gender === 'L' 
+                                  ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400" 
+                                  : "bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+                              )}>
+                                {p.gender === 'L' ? 'L' : 'P'}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider transition-colors">{p.phone}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-5">
-                    <div className="max-w-[200px]">
-                      <p className="text-xs text-slate-600 dark:text-slate-400 font-medium line-clamp-2 transition-colors">
-                        {p.address || '-'}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-4 py-5">
-                    {p.medicalHistory ? (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg text-xs font-bold ring-1 ring-red-100 dark:ring-red-900/30 transition-colors">
-                        <HeartPulse className="w-3.5 h-3.5" />
-                        {p.medicalHistory}
+                    </td>
+                    <td className="px-4 py-5">
+                      <div className="max-w-[200px]">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 font-medium line-clamp-2 transition-colors">
+                          {p.address || '-'}
+                        </p>
                       </div>
-                    ) : (
-                      <span className="text-xs text-slate-300 dark:text-slate-600 font-medium italic transition-colors">Tidak ada</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-5">
-                    {p.allergies ? (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-bold ring-1 ring-amber-100 dark:ring-amber-900/30 transition-colors">
-                        <ShieldAlert className="w-3.5 h-3.5" />
-                        {p.allergies}
+                    </td>
+                    <td className="px-4 py-5">
+                      {p.medicalHistory ? (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg text-xs font-bold ring-1 ring-red-100 dark:ring-red-900/30 transition-colors">
+                          <HeartPulse className="w-3.5 h-3.5" />
+                          {p.medicalHistory}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-300 dark:text-slate-600 font-medium italic transition-colors">Tidak ada</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-5">
+                      {p.allergies ? (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-bold ring-1 ring-amber-100 dark:ring-amber-900/30 transition-colors">
+                          <ShieldAlert className="w-3.5 h-3.5" />
+                          {p.allergies}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-300 dark:text-slate-600 font-medium italic transition-colors">Tidak ada</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-5 text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors">
+                      {p.lastVisit || '-'}
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => onOpenEmr && onOpenEmr(p)}
+                          className="px-4 py-2 bg-[#0E7490]/10 text-[#0E7490] text-[10px] font-black rounded-xl hover:bg-[#0E7490] hover:text-white transition-all flex items-center gap-2 hover-lift"
+                        >
+                          <ClipboardList className="w-3.5 h-3.5" />
+                          EMR
+                        </button>
+                        <button 
+                          onClick={() => {
+                            const link = getWhatsAppLink(p.phone, `Halo *${p.name}*, kami dari *Praktek Gigi Ranida*...`);
+                            window.open(link, '_blank');
+                          }} 
+                          className="p-2 text-emerald-500 hover:text-emerald-600 transition-colors hover-lift"
+                          title="Hubungi via WhatsApp"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => onEdit(p)} 
+                          className="p-2 text-slate-400 hover:text-blue-600 transition-colors hover-lift"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => onDeleteMaster(p.id)} 
+                          className="p-2 text-slate-400 hover:text-red-600 transition-colors hover-lift"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                    ) : (
-                      <span className="text-xs text-slate-300 dark:text-slate-600 font-medium italic transition-colors">Tidak ada</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-5 text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors">
-                    {p.lastVisit || '-'}
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => onOpenEmr && onOpenEmr(p)}
-                        className="px-4 py-2 bg-[#0E7490]/10 text-[#0E7490] text-[10px] font-black rounded-xl hover:bg-[#0E7490] hover:text-white transition-all flex items-center gap-2 hover-lift"
-                      >
-                        <ClipboardList className="w-3.5 h-3.5" />
-                        EMR
-                      </button>
-                      <button 
-                        onClick={() => {
-                          const link = getWhatsAppLink(p.phone, `Halo *${p.name}*, kami dari *Praktek Gigi Ranida*...`);
-                          window.open(link, '_blank');
-                        }} 
-                        className="p-2 text-emerald-500 hover:text-emerald-600 transition-colors hover-lift"
-                        title="Hubungi via WhatsApp"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => onEdit(p)} 
-                        className="p-2 text-slate-400 hover:text-blue-600 transition-colors hover-lift"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => onDeleteMaster(p.id)} 
-                        className="p-2 text-slate-400 hover:text-red-600 transition-colors hover-lift"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </motion.tbody>
-          </table>
-          {filteredPatients.length === 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-20 text-center text-slate-400">
-              <Users className="w-16 h-16 mx-auto mb-4 opacity-10" />
-              <p className="text-sm font-bold uppercase tracking-widest italic">Data pasien tidak ditemukan</p>
-            </motion.div>
-          )}
-        </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </motion.tbody>
+            </table>
+            {filteredPatients.length === 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-20 text-center text-slate-400">
+                <Users className="w-16 h-16 mx-auto mb-4 opacity-10" />
+                <p className="text-sm font-bold uppercase tracking-widest italic">Data pasien tidak ditemukan</p>
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );

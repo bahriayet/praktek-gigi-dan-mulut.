@@ -379,19 +379,6 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Alergi (Obat/Makanan)</label>
-                <div className="relative group">
-                  <ShieldAlert className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors" />
-                  <input
-                    type="text"
-                    value={formData.allergies}
-                    onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
-                    placeholder="Contoh: Alergi Amoxicillin, Alergi Bius..."
-                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
-                  />
-                </div>
-              </motion.div>
 
               <motion.div variants={itemVariants} className="space-y-3">
                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Rencana Kedatangan</label>
