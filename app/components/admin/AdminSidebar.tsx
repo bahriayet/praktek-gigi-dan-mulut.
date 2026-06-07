@@ -79,20 +79,6 @@ export default function AdminSidebar({
   });
 
   const [resetModalOpen, setResetModalOpen] = useState(false);
-  const [factoryResetModalOpen, setFactoryResetModalOpen] = useState(false);
-
-  const handleFactoryResetConfirm = async () => {
-    try {
-      if (onFactoryReset) {
-        await onFactoryReset();
-        showToast('Database klinis telah dibersihkan sepenuhnya.', 'success');
-        setFactoryResetModalOpen(false);
-      }
-    } catch (error) {
-      console.error('Factory reset error:', error);
-      showToast('Gagal membersihkan database.', 'error');
-    }
-  };
 
   const handleResetQueue = async () => {
     try {
@@ -189,16 +175,7 @@ export default function AdminSidebar({
            >
              Reset Antrean
            </button>
-           {userRole === 'admin' && (
-             <button
-               onClick={() => setFactoryResetModalOpen(true)}
-               className="w-full py-3.5 bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-red-100 dark:border-red-900/30 hover:bg-red-600 hover:text-white transition-all hover-lift active:scale-95 flex items-center justify-center gap-2"
-             >
-               <Activity className="w-3.5 h-3.5" />
-               Hapus Semua Data (Mulai Baru)
-             </button>
-           )}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
+           <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
             <p className="px-4 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Tampilan Publik</p>
             <button
               onClick={() => {
@@ -232,14 +209,6 @@ export default function AdminSidebar({
             description="Apakah Anda yakin ingin mereset nomor antrean? Nomor pendaftaran berikutnya akan kembali dimulai dari 1."
             onConfirm={handleResetQueue}
             onClose={() => setResetModalOpen(false)}
-          />
-        )}
-        {factoryResetModalOpen && (
-          <ConfirmDeleteModal
-            title="Hapus SEMUA Data Klinis?"
-            description="TINDAKAN INI TIDAK DAPAT DIBATALKAN. Semua data antrean, pasien, rekam medis, dan inventori akan dihapus permanen. Gunakan hanya jika Anda ingin memulai dari awal."
-            onConfirm={handleFactoryResetConfirm}
-            onClose={() => setFactoryResetModalOpen(false)}
           />
         )}
       </AnimatePresence>

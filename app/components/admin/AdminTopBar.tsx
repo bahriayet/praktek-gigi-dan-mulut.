@@ -76,15 +76,7 @@ export default function AdminTopBar({
         
 
 
-        <nav className="hidden md:flex gap-6">
-          {isStaff && (
-            <button
-              className="text-brand-500 dark:text-brand-400 font-bold border-b-2 border-brand-500 dark:border-brand-400 pb-1 text-sm whitespace-nowrap"
-            >
-              Area Praktek Gigi
-            </button>
-          )}
-        </nav>
+
       </div>
 
       <div className="flex items-center gap-4">
