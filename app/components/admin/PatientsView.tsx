@@ -121,25 +121,17 @@ export default function PatientsView({
               )}
 
               <div className="grid grid-cols-2 gap-2">
-                <div className={cn(
-                  "p-3 rounded-2xl border text-[10px] space-y-1 transition-colors",
-                  p.medicalHistory ? "bg-red-50/50 dark:bg-red-500/10 border-red-100 dark:border-red-900/30 text-red-700 dark:text-red-400" : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400"
-                )}>
-                  <div className="flex items-center gap-1.5 font-bold uppercase tracking-widest">
-                    <HeartPulse className="w-3 h-3" />
+                <div className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-[10px] space-y-1 transition-colors">
+                  <div className="font-bold uppercase tracking-widest text-slate-450 dark:text-slate-500">
                     Riw. Penyakit
                   </div>
-                  <p className="font-medium line-clamp-1">{p.medicalHistory || 'Tidak ada'}</p>
+                  <p className="font-medium text-slate-700 dark:text-slate-300 line-clamp-1">{p.medicalHistory || 'Tidak ada'}</p>
                 </div>
-                <div className={cn(
-                  "p-3 rounded-2xl border text-[10px] space-y-1 transition-colors",
-                  p.allergies ? "bg-amber-50/50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-900/30 text-amber-700 dark:text-amber-400" : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400"
-                )}>
-                  <div className="flex items-center gap-1.5 font-bold uppercase tracking-widest">
-                    <ShieldAlert className="w-3 h-3" />
+                <div className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-[10px] space-y-1 transition-colors">
+                  <div className="font-bold uppercase tracking-widest text-slate-450 dark:text-slate-500">
                     Alergi
                   </div>
-                  <p className="font-medium line-clamp-1">{p.allergies || 'Tidak ada'}</p>
+                  <p className="font-medium text-slate-700 dark:text-slate-300 line-clamp-1">{p.allergies || 'Tidak ada'}</p>
                 </div>
               </div>
 
