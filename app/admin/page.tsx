@@ -235,7 +235,7 @@ export default function AdminPage() {
             <div className="flex-1 overflow-y-auto p-4 md:p-8">
               <AnimatePresence mode="wait">
                 {adminSubView === 'dashboard' && <ClinicDashboard key="d" queue={queue} inventory={inventory} setActiveSubView={setAdminSubView} onAddPatient={() => handleNavigation('patient')} sendWhatsAppNotification={sendWhatsAppNotification} onOpenEmr={handleOpenEmr} clinicConfig={clinicConfig} updateClinicConfig={updateClinicConfig} showToast={showToast} requestConfirm={requestConfirm} />}
-                {adminSubView === 'patients' && <PatientsView key="p" patients={patients} onEdit={setEditingPatient} onDeleteMaster={(id) => setDeletingItem({id, type:'patient'})} onOpenEmr={handleOpenEmr} searchTerm={searchTerm} setSearchTerm={setSearchTerm} showToast={showToast} requestConfirm={requestConfirm} />}
+                {adminSubView === 'patients' && <PatientsView key="p" patients={patients} onEdit={setEditingPatient} onDeleteMaster={(id) => setDeletingItem({id, type:'patient'})} onOpenEmr={handleOpenEmr} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
                 {adminSubView === 'records' && <RecordsView key="r" visits={visits} onViewDetail={setViewingRecord} onEdit={setEditingVisit} onDelete={(id) => setDeletingItem({id, type:'visit'})} searchTerm={searchTerm} setSearchTerm={setSearchTerm} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'hasil-emr' && <HasilEmrView key="h" visits={visits} onOpenEmr={handleOpenEmr} searchTerm={searchTerm} setSearchTerm={setSearchTerm} sendWhatsAppNotification={sendWhatsAppNotification} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'gallery' && (
@@ -259,7 +259,7 @@ export default function AdminPage() {
 
 
                 {adminSubView === 'emr' && managingEmr && <EmrPage key="e" patient={managingEmr} onBack={handleCloseEmr} showToast={showToast} requestConfirm={requestConfirm} />}
-                {adminSubView === 'inventory' && <InventoryView key="i" inventory={inventory} onEdit={setEditingInventory} onDelete={(id) => setDeletingItem({id, type:'inventory'})} onAdd={() => setEditingInventory({} as any)} showToast={showToast} requestConfirm={requestConfirm} />}
+                {adminSubView === 'inventory' && <InventoryView key="i" inventory={inventory} onEdit={setEditingInventory} onDelete={(id) => setDeletingItem({id, type:'inventory'})} onAdd={() => setEditingInventory({} as any)} />}
                 {adminSubView === 'finance' && <FinanceView key="f" finishedQueue={queue} onAdd={() => setAdminSubView('dashboard')} onEdit={setEditingVisit} onDelete={(id) => setDeletingItem({id, type:'visit'})} searchTerm={searchTerm} setSearchTerm={setSearchTerm} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'staff' && <StaffView key="s" users={users} onUpdateRole={handleUpdateUserRole} onUpdateName={handleUpdateUserName} showToast={showToast} requestConfirm={requestConfirm} />}
                 {adminSubView === 'articles' && (
