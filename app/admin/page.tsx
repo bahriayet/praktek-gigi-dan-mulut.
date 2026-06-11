@@ -50,6 +50,8 @@ import ConfirmModal from '@/app/components/modals/ConfirmModal';
 // Shared Icons/UI
 import { Ticket, Clock, MapPin, Bot, ShieldAlert, CheckCircle2, AlertCircle, Sparkles, Activity, LayoutDashboard, Image as ImageIcon, ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
+import { db, collection, addDoc, serverTimestamp, query, where, getDocs } from '@/lib/firebase';
+import { updateDocObj } from '@/lib/firestoreService';
 import { cn, getLocalYMD } from '@/lib/utils';
 
 export default function AdminPage() {
@@ -333,7 +335,65 @@ export default function AdminPage() {
         {editingPatient && <EditPatientModal patient={editingPatient} onSave={(data) => handleUpdatePatient(editingPatient.id!, data)} onClose={() => setEditingPatient(null)} />}
         {editingInventory && <EditInventoryModal item={editingInventory} onSave={(data) => handleUpdateInventory(editingInventory.id!, data)} onClose={() => setEditingInventory(null)} />}
         {viewingRecord && <RecordDetailModal record={viewingRecord} onClose={() => setViewingRecord(null)} sendWhatsAppNotification={sendWhatsAppNotification} />}
-        {editingVisit && <EditVisitModal visit={editingVisit} onSave={(data) => handleUpdateVisit(editingVisit.id!, data)} onClose={() => setEditingVisit(null)} />}
+        {editingVisit && (
+          <EditVisitModal 
+            visit={editingVisit} 
+            onSave={async (data) => {
+              if (adminSubView === 'finance') {
+                // 1. Update queue item in queues collection
+                await updateDocObj('queues', editingVisit.id!, {
+                  billingAmount: data.billingAmount,
+                  treatment: data.assessmentDescription || data.plan || ''
+                });
+                showToast('Transaksi keuangan diupdate');
+
+                // 2. Query and sync matching visit document in visits collection
+                try {
+                  const q = query(
+                    collection(db, 'visits'),
+                    where('patientId', '==', editingVisit.phone),
+                    where('date', '==', editingVisit.date)
+                  );
+                  const snap = await getDocs(q);
+                  if (!snap.empty) {
+                    const visitDoc = snap.docs[0];
+                    await updateDocObj('visits', visitDoc.id, {
+                      billingAmount: data.billingAmount,
+                      assessmentDescription: data.assessmentDescription || '',
+                      plan: data.plan || ''
+                    });
+                  }
+                } catch (e) {
+                  console.error("Gagal sinkronisasi data keuangan ke visits:", e);
+                }
+              } else {
+                // 1. Update visit in visits collection
+                await handleUpdateVisit(editingVisit.id!, data);
+
+                // 2. Query and sync matching queue item in queues collection
+                try {
+                  const q = query(
+                    collection(db, 'queues'),
+                    where('phone', '==', editingVisit.patientId),
+                    where('date', '==', editingVisit.date)
+                  );
+                  const snap = await getDocs(q);
+                  if (!snap.empty) {
+                    const queueDoc = snap.docs[0];
+                    await updateDocObj('queues', queueDoc.id, {
+                      billingAmount: data.billingAmount,
+                      treatment: data.assessmentDescription || data.plan || ''
+                    });
+                  }
+                } catch (e) {
+                  console.error("Gagal sinkronisasi data rekam medis ke queues:", e);
+                }
+              }
+              setEditingVisit(null);
+            }} 
+            onClose={() => setEditingVisit(null)} 
+          />
+        )}
         {showTicket && (
           <TicketView 
             ticket={showTicket} 
