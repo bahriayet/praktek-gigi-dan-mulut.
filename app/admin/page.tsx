@@ -339,6 +339,24 @@ export default function AdminPage() {
           <EditVisitModal 
             visit={editingVisit} 
             onSave={async (data) => {
+              const toYMD = (dateStr: string) => {
+                if (!dateStr) return '';
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+                try {
+                  const d = new Date(dateStr);
+                  if (isNaN(d.getTime())) return dateStr;
+                  const year = d.getFullYear();
+                  const month = String(d.getMonth() + 1).padStart(2, '0');
+                  const day = String(d.getDate()).padStart(2, '0');
+                  return `${year}-${month}-${day}`;
+                } catch (e) {
+                  return dateStr;
+                }
+              };
+
+              const patientPhone = editingVisit.phone || editingVisit.patientId;
+              const targetDateYMD = toYMD(editingVisit.date);
+
               if (adminSubView === 'finance') {
                 // 1. Update queue item in queues collection
                 await updateDocObj('queues', editingVisit.id!, {
@@ -351,13 +369,12 @@ export default function AdminPage() {
                 try {
                   const q = query(
                     collection(db, 'visits'),
-                    where('patientId', '==', editingVisit.phone),
-                    where('date', '==', editingVisit.date)
+                    where('patientId', '==', patientPhone)
                   );
                   const snap = await getDocs(q);
-                  if (!snap.empty) {
-                    const visitDoc = snap.docs[0];
-                    await updateDocObj('visits', visitDoc.id, {
+                  const matchingDoc = snap.docs.find(d => toYMD(d.data().date) === targetDateYMD);
+                  if (matchingDoc) {
+                    await updateDocObj('visits', matchingDoc.id, {
                       billingAmount: data.billingAmount,
                       assessmentDescription: data.assessmentDescription || '',
                       plan: data.plan || ''
@@ -374,13 +391,12 @@ export default function AdminPage() {
                 try {
                   const q = query(
                     collection(db, 'queues'),
-                    where('phone', '==', editingVisit.patientId),
-                    where('date', '==', editingVisit.date)
+                    where('phone', '==', patientPhone)
                   );
                   const snap = await getDocs(q);
-                  if (!snap.empty) {
-                    const queueDoc = snap.docs[0];
-                    await updateDocObj('queues', queueDoc.id, {
+                  const matchingDoc = snap.docs.find(d => toYMD(d.data().date) === targetDateYMD);
+                  if (matchingDoc) {
+                    await updateDocObj('queues', matchingDoc.id, {
                       billingAmount: data.billingAmount,
                       treatment: data.assessmentDescription || data.plan || ''
                     });
