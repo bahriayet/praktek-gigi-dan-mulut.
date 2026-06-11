@@ -238,7 +238,7 @@ export function useClinicData(initialView: View = 'patient') {
   };
 
   const handleUpdatePatient = async (id: string, updates: any) => {
-    await updateDocObj('queues', id, updates);
+    await updateDocObj('patients', id, updates);
     showToast('Data pasien diupdate');
   };
 
