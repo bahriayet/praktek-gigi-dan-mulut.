@@ -131,6 +131,21 @@ export default function AdminPage() {
     setAdminSubView('dashboard');
   };
 
+  const handleAdminSearch = (val: string) => {
+    const lowerVal = val.toLowerCase();
+    if (lowerVal.endsWith('-d')) {
+      const stripped = val.slice(0, -2).trim();
+      setSearchTerm(stripped);
+      setAdminSubView('patients');
+    } else if (lowerVal.endsWith('-r')) {
+      const stripped = val.slice(0, -2).trim();
+      setSearchTerm(stripped);
+      setAdminSubView('records');
+    } else {
+      setSearchTerm(val);
+    }
+  };
+
   // Content Selection Logic
   let mainContent;
 
@@ -231,7 +246,7 @@ export default function AdminPage() {
           <div className="flex-1 flex flex-col h-screen overflow-hidden">
             <AdminTopBar 
               user={user} userRole={userRole} activeView={activeView} setActiveView={handleNavigation}
-              searchTerm={searchTerm} setSearchTerm={setSearchTerm}
+              searchTerm={searchTerm} setSearchTerm={handleAdminSearch}
               toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} onOpenAiAssistant={() => setIsAiModalGlobalOpen(true)}
             />
             <div className="flex-1 overflow-y-auto p-4 md:p-8">

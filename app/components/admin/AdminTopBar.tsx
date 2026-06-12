@@ -31,6 +31,11 @@ export default function AdminTopBar({
   const isStaff = userRole === 'admin' || userRole === 'doctor';
   
   const [inputValue, setInputValue] = React.useState(searchTerm);
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  React.useEffect(() => {
+    setInputValue(searchTerm);
+  }, [searchTerm]);
 
   const handleTriggerSearch = (val: string) => {
     setSearchTerm(val);
@@ -71,7 +76,36 @@ export default function AdminTopBar({
             value={inputValue}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
+
+          {isFocused && inputValue.trim().length > 0 && (
+            <div className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-850 rounded-2xl shadow-premium z-50 overflow-hidden py-1 transition-all duration-200 animate-in fade-in slide-in-from-top-1">
+              <button
+                type="button"
+                onMouseDown={() => {
+                  const cleanVal = inputValue.replace(/\s*-[drDR]\s*$/, '').trim();
+                  handleTriggerSearch(cleanVal + ' -d');
+                }}
+                className="w-full px-4 py-3 text-left text-xs md:text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors border-b border-slate-50 dark:border-slate-800/40"
+              >
+                <span className="text-brand-500 text-sm">🔍</span>
+                <span>Cari &quot;<strong className="text-slate-900 dark:text-white">{inputValue.replace(/\s*-[drDR]\s*$/, '').trim()}</strong>&quot; di Direktori Pasien</span>
+              </button>
+              <button
+                type="button"
+                onMouseDown={() => {
+                  const cleanVal = inputValue.replace(/\s*-[drDR]\s*$/, '').trim();
+                  handleTriggerSearch(cleanVal + ' -r');
+                }}
+                className="w-full px-4 py-3 text-left text-xs md:text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors"
+              >
+                <span className="text-indigo-500 text-sm">📋</span>
+                <span>Cari &quot;<strong className="text-slate-900 dark:text-white">{inputValue.replace(/\s*-[drDR]\s*$/, '').trim()}</strong>&quot; di Rekam Kunjungan</span>
+              </button>
+            </div>
+          )}
         </div>
         
 
