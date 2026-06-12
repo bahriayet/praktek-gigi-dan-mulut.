@@ -352,35 +352,6 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
               </motion.div>
 
               <motion.div variants={itemVariants} className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Alamat Lengkap</label>
-                <div className="relative group">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors" />
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="Nama jalan atau kota..."
-                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Riwayat Penyakit (Jika Ada)</label>
-                <div className="relative group">
-                  <ActivityIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-red-600 dark:group-focus-within:text-red-400 transition-colors" />
-                  <input
-                    type="text"
-                    value={formData.medicalHistory}
-                    onChange={(e) => setFormData({ ...formData, medicalHistory: e.target.value })}
-                    placeholder="Contoh: Diabetes, Asma, Hipertensi..."
-                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
-                  />
-                </div>
-              </motion.div>
-
-
-              <motion.div variants={itemVariants} className="space-y-3">
                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Rencana Kedatangan</label>
                 <div className="relative group">
                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors" />
@@ -417,6 +388,48 @@ export default function PatientPortal({ queue, onShowTicket, clinicConfig, sendW
                     <option>20:30 WITA</option>
                     <option>21:00 WITA</option>
                   </select>
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-3">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Riwayat Penyakit (Jika Ada)</label>
+                <div className="relative group">
+                  <ActivityIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-red-600 dark:group-focus-within:text-red-400 transition-colors" />
+                  <input
+                    type="text"
+                    value={formData.medicalHistory}
+                    onChange={(e) => setFormData({ ...formData, medicalHistory: e.target.value })}
+                    placeholder="Contoh: Diabetes, Asma, Hipertensi..."
+                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-3">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Alergi (Jika Ada)</label>
+                <div className="relative group">
+                  <ShieldAlert className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-amber-600 dark:group-focus-within:text-amber-400 transition-colors" />
+                  <input
+                    type="text"
+                    value={formData.allergies}
+                    onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
+                    placeholder="Contoh: Penicillin, Seafood, Debu..."
+                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="md:col-span-2 space-y-3">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-2 block transition-colors">Alamat Lengkap</label>
+                <div className="relative group">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 dark:text-slate-600 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors" />
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="Nama jalan atau kota..."
+                    className="luxury-input w-full pl-12 h-14 md:h-16 text-base border-glow"
+                  />
                 </div>
               </motion.div>
 
